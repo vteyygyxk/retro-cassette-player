@@ -88,6 +88,7 @@ export function LEDDisplay({
         trackName={trackName}
         artist={artist}
         hasTrack={hasTrack}
+        isPlaying={isPlaying}
       />
 
       {/* Lyrics display section */}

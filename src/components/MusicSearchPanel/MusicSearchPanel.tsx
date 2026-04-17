@@ -42,11 +42,13 @@ export function MusicSearchPanel({ className }: MusicSearchPanelProps) {
     setKeyword,
     results,
     isSearching,
+    isRandomPlaying,
     error,
     search,
     addToPlaylist,
     playNow,
     clearResults,
+    randomPlay,
   } = useMusicSearch();
 
   const [loadingId, setLoadingId] = useState<number | null>(null);
@@ -107,6 +109,18 @@ export function MusicSearchPanel({ className }: MusicSearchPanelProps) {
           disabled={isSearching || !keyword.trim()}
         >
           {isSearching ? '...' : '搜索'}
+        </button>
+        <button
+          type="button"
+          className={styles.randomPlayButton}
+          onClick={randomPlay}
+          disabled={isRandomPlaying}
+          title="随机播放一首在线歌曲"
+        >
+          <span className={styles.randomPlayIcon}>
+            {isRandomPlaying ? '⟳' : '🎲'}
+          </span>
+          <span className={styles.randomPlayText}>随心听</span>
         </button>
         {results.length > 0 && (
           <button

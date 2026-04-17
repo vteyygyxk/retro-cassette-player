@@ -20,6 +20,7 @@
 
 .searchBar {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   padding: 10px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -85,6 +86,55 @@
 .clearButton:hover {
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.7);
+}
+
+/* === Random Play Button === */
+
+.randomPlayButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, rgba(180, 130, 220, 0.25) 0%, rgba(200, 150, 200, 0.2) 100%);
+  border: 1px solid rgba(180, 130, 220, 0.4);
+  border-radius: 4px;
+  color: #d8b8f0;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.randomPlayButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(180, 130, 220, 0.35) 0%, rgba(200, 150, 200, 0.3) 100%);
+  border-color: rgba(180, 130, 220, 0.6);
+}
+
+.randomPlayButton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.randomPlayButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.randomPlayIcon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.randomPlayButton:disabled .randomPlayIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.randomPlayText {
+  font-weight: 500;
 }
 
 /* === Error Message === */

@@ -16,6 +16,23 @@ const isDev = import.meta.env.DEV;
 const API_BASE = isDev ? '/api/netease' : 'https://music.163.com/api';
 
 /**
+ * Random keywords for "随心听" feature
+ * A mix of popular artists, genres, and music-related terms
+ */
+const RANDOM_KEYWORDS = [
+  // Popular artists (Chinese)
+  '周杰伦', '林俊杰', '陈奕迅', '薛之谦', '毛不易', '邓紫棋', '华晨宇',
+  '李荣浩', '张杰', '张碧晨', '许嵩', '汪苏泷', 'Taylor Swift', 'Ed Sheeran',
+  // Music genres and moods
+  '流行', '摇滚', '民谣', '电子', '轻音乐', '古风', '爵士', 'R&B',
+  '治愈', '伤感', '励志', '浪漫', '安静', '动感', '怀旧',
+  // Music elements
+  '钢琴曲', '吉他', '小提琴', '纯音乐', '翻唱', '现场版',
+  // Time periods
+  '经典老歌', '90年代', '00年代', '金曲',
+];
+
+/**
  * Request timeout in milliseconds
  */
 const REQUEST_TIMEOUT = 15000;
@@ -245,6 +262,51 @@ export class MusicSearchService {
       ...track,
       albumCover: detail.albumCover,
     };
+  }
+
+  /**
+   * Get a random song for "随心听" (Random Play) feature
+   * Randomly selects a keyword, searches, and returns a playable track
+   */
+  async getRandomSong(): Promise<Track> {
+    // Pick a random keyword
+    const randomKeyword = RANDOM_KEYWORDS[Math.floor(Math.random() * RANDOM_KEYWORDS.length)];
+    console.log('[随心听] Searching with keyword:', randomKeyword);
+
+    // Search with the random keyword
+    const results = await this.search(randomKeyword, 50);
+
+    if (results.length === 0) {
+      throw new Error('未找到可播放的歌曲，请重试');
+    }
+
+    // Filter out VIP-only songs (fee=1) and shuffle
+    const playableResults = results.filter((r) => r.fee !== 1);
+
+    if (playableResults.length === 0) {
+      throw new Error('当前搜索结果均为VIP歌曲，请重试');
+    }
+
+    // Shuffle and try to find a playable song
+    const shuffled = playableResults.sort(() => Math.random() - 0.5);
+
+    // Try up to 5 songs in case some URLs are unavailable
+    const maxAttempts = Math.min(5, shuffled.length);
+
+    for (let i = 0; i < maxAttempts; i++) {
+      const result = shuffled[i];
+      try {
+        const track = await this.searchResultToTrack(result);
+        const trackWithCover = await this.ensureTrackAlbumCover(track, result.id);
+        console.log('[随心听] Found song:', track.name, '-', track.artist);
+        return trackWithCover;
+      } catch (err) {
+        console.log('[随心听] Song not playable, trying next:', result.name);
+        continue;
+      }
+    }
+
+    throw new Error('未找到可播放的歌曲，请重试');
   }
 }
 

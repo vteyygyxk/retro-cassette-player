@@ -22,6 +22,8 @@ export interface UseMusicSearchReturn {
   results: MusicSearchResult[];
   /** Whether a search is in progress */
   isSearching: boolean;
+  /** Whether a random play is in progress */
+  isRandomPlaying: boolean;
   /** Error message if search failed */
   error: string | null;
   /** Execute search with current keyword */
@@ -32,6 +34,8 @@ export interface UseMusicSearchReturn {
   playNow: (result: MusicSearchResult) => Promise<void>;
   /** Clear search results and keyword */
   clearResults: () => void;
+  /** Play a random song (随心听) */
+  randomPlay: () => Promise<void>;
 }
 
 // ============================================================================
@@ -48,6 +52,7 @@ export function useMusicSearch(): UseMusicSearchReturn {
   const [keyword, setKeyword] = useState('');
   const [results, setResults] = useState<MusicSearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isRandomPlaying, setIsRandomPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Track ongoing operations to prevent duplicates
@@ -128,15 +133,45 @@ export function useMusicSearch(): UseMusicSearchReturn {
     setError(null);
   }, []);
 
+  const randomPlay = useCallback(async () => {
+    // Prevent duplicate random play operations
+    if (isRandomPlaying) return;
+
+    setIsRandomPlaying(true);
+    setError(null);
+
+    try {
+      const service = getService();
+      const track = await service.getRandomSong();
+
+      // Add to playlist if not already there, then play
+      const newPlaylist = [...playlist, track];
+      const newIndex = newPlaylist.length - 1;
+      setPlaylist(newPlaylist);
+      setCurrentTrack(track, newIndex);
+
+      // Small delay to ensure track is loaded before playing
+      setTimeout(() => {
+        play();
+      }, 100);
+    } catch (err: any) {
+      setError(err.message || '随机播放失败');
+    } finally {
+      setIsRandomPlaying(false);
+    }
+  }, [isRandomPlaying, getService, playlist, setPlaylist, setCurrentTrack, play]);
+
   return {
     keyword,
     setKeyword,
     results,
     isSearching,
+    isRandomPlaying,
     error,
     search,
     addToPlaylist,
     playNow,
     clearResults,
+    randomPlay,
   };
 }

@@ -630,14 +630,6 @@ export function TapePlayer() {
                 onRemoveFavorite={(track) => toggleFavorite(track)}
               />
 
-              {/* Add files button */}
-              <label
-                htmlFor="tape-player-file-input"
-                className={styles.addFilesButton}
-              >
-                + 添加文件
-              </label>
-
               {/* Online search toggle */}
               <button
                 className={styles.searchToggleButton}

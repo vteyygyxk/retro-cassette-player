@@ -1,9 +1,8 @@
 /**
  * TrackInfo Component - Displays track name with scrolling animation
- * Shows the current track name, scrolling if too long
+ * Shows the current track name, scrolling when playing
  */
 
-import { useState, useEffect, useRef } from 'react';
 import styles from './LEDDisplay.module.css';
 
 /**
@@ -16,18 +15,20 @@ export interface TrackInfoProps {
   artist?: string;
   /** Whether a track is loaded */
   hasTrack: boolean;
+  /** Whether the track is currently playing */
+  isPlaying?: boolean;
   /** Additional CSS class */
   className?: string;
 }
 
 /**
  * TrackInfo component - Displays track name with scrolling animation
- * 
+ *
  * Features:
- * - Shows track name, scrolling if too long for the display
+ * - Shows track name with scrolling animation when playing
  * - Shows placeholder text when no track is loaded
  * - Smooth scrolling animation with CSS
- * 
+ *
  * @param props - Component props
  * @returns The TrackInfo component
  */
@@ -35,27 +36,13 @@ export function TrackInfo({
   trackName,
   artist: _artist,
   hasTrack,
+  isPlaying = false,
   className,
 }: TrackInfoProps) {
-  const trackNameRef = useRef<HTMLDivElement>(null);
-  const [shouldScroll, setShouldScroll] = useState(false);
-
-  // Check if text overflows and enable scrolling
-  useEffect(() => {
-    const element = trackNameRef.current;
-    if (element && trackName) {
-      // Check if the text width exceeds the container width
-      const isOverflowing = element.scrollWidth > element.clientWidth;
-      setShouldScroll(isOverflowing);
-    } else {
-      setShouldScroll(false);
-    }
-  }, [trackName]);
-
   // If no track is loaded, show placeholder
   if (!hasTrack || !trackName) {
     return (
-      <div 
+      <div
         className={`${styles.trackInfo} ${className ?? ''}`}
         data-testid="track-info"
       >
@@ -64,25 +51,26 @@ export function TrackInfo({
     );
   }
 
+  // When playing, always show scrolling animation
+  const shouldScroll = isPlaying;
+
   return (
-    <div 
+    <div
       className={`${styles.trackInfo} ${className ?? ''}`}
       data-testid="track-info"
       aria-label={`Now playing: ${trackName}`}
     >
       <div
-        ref={trackNameRef}
         className={`${styles.trackName} ${shouldScroll ? styles.scrolling : ''}`}
         title={trackName}
       >
         {shouldScroll ? (
-          // Duplicate text for seamless scrolling
           <>
             <span className={styles.trackNameScroll}>{trackName}</span>
             <span className={styles.trackNameScroll}>{trackName}</span>
           </>
         ) : (
-          trackName
+          <span className={styles.trackNameDisplay}>{trackName}</span>
         )}
       </div>
     </div>
