@@ -1,0 +1,127 @@
+/**
+ * LyricsDisplay Component Styles
+ * LED-style lyrics display within the LED panel
+ */
+
+/* === Lyrics Section === */
+
+.lyricsSection {
+  height: 72px;
+  min-height: 72px;
+  max-height: 72px;
+  overflow: hidden;
+  position: relative;
+  border-top: 1px solid rgba(0, 255, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 255, 0, 0.06);
+  flex-shrink: 0;
+}
+
+/* === Lyrics Window (visible lines) === */
+
+.lyricsWindow {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  padding: 2px 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* === Individual Lyric Line === */
+
+.lyricLine {
+  color: var(--led-text-color, #00ff00);
+  font-size: var(--font-size-sm, 12px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.3;
+  transition: opacity 0.3s ease, text-shadow 0.3s ease, font-size 0.15s ease;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.lyricLine.activeLine {
+  opacity: 1;
+  font-size: var(--font-size-md, 14px);
+  font-weight: bold;
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+}
+
+.lyricLine.pastLine {
+  opacity: 0.2;
+}
+
+/* === No Lyrics State === */
+
+.noLyrics {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  height: 100%;
+}
+
+.noLyricsText {
+  color: var(--led-text-color, #00ff00);
+  font-size: var(--font-size-sm, 12px);
+  opacity: 0.4;
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+}
+
+/* === Lyrics Action Buttons === */
+
+.lyricsActions {
+  display: flex;
+  gap: var(--spacing-xs, 4px);
+}
+
+.lyricsAction {
+  padding: 2px 8px;
+  background: rgba(0, 255, 0, 0.1);
+  color: var(--led-text-color, #00ff00);
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 3px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.lyricsAction:hover:not(:disabled) {
+  background: rgba(0, 255, 0, 0.2);
+  border-color: rgba(0, 255, 0, 0.4);
+}
+
+.lyricsAction:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* === Responsive === */
+
+@media (max-width: 480px) {
+  .lyricsSection {
+    height: 60px;
+    min-height: 60px;
+    max-height: 60px;
+  }
+
+  .lyricLine {
+    font-size: 10px;
+  }
+
+  .lyricLine.activeLine {
+    font-size: var(--font-size-sm, 12px);
+  }
+}
+
+/* === Reduced Motion === */
+
+@media (prefers-reduced-motion: reduce) {
+  .lyricLine {
+    transition: none;
+  }
+}

@@ -1,0 +1,289 @@
+/**
+ * PlaylistPanel Component Styles
+ * CSS Module for expandable playlist panel
+ */
+
+/* === Main Container === */
+
+.playlistPanel {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* === Header / Toggle === */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  width: 100%;
+  padding: var(--spacing-sm, 8px) var(--spacing-md, 16px);
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--led-text-color, #00ff00);
+  font-family: var(--font-family-base, sans-serif);
+  font-size: var(--font-size-sm, 12px);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  min-height: 44px;
+}
+
+.header:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.header:focus-visible {
+  outline: 2px solid var(--led-text-color, #00ff00);
+  outline-offset: -2px;
+}
+
+.headerIcon {
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+.headerTitle {
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* === Content (Expandable Area) === */
+
+.content {
+  overflow: hidden;
+}
+
+/* === Empty State === */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs, 4px);
+  padding: var(--spacing-xl, 32px) var(--spacing-md, 16px);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: var(--font-size-sm, 12px);
+}
+
+.emptyHint {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* === Track List === */
+
+.trackList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* === Track Item === */
+
+.trackItem {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.15s ease;
+}
+
+.trackItem:last-child {
+  border-bottom: none;
+}
+
+.trackItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.trackItemActive {
+  background: rgba(0, 255, 0, 0.08);
+}
+
+.trackItemActive:hover {
+  background: rgba(0, 255, 0, 0.12);
+}
+
+/* === Track Button === */
+
+.trackButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  flex: 1;
+  padding: var(--spacing-sm, 8px) var(--spacing-md, 16px);
+  background: none;
+  border: none;
+  color: #ccc;
+  font-family: inherit;
+  font-size: var(--font-size-sm, 12px);
+  cursor: pointer;
+  text-align: left;
+  min-height: 44px;
+  transition: color 0.15s ease;
+}
+
+.trackButton:focus-visible {
+  outline: 2px solid var(--led-text-color, #00ff00);
+  outline-offset: -2px;
+}
+
+.trackItemActive .trackButton {
+  color: var(--led-text-color, #00ff00);
+}
+
+/* === Track Number === */
+
+.trackNumber {
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.trackItemActive .trackNumber {
+  color: var(--led-text-color, #00ff00);
+}
+
+.playingIcon {
+  font-size: 10px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* === Track Info === */
+
+.trackInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.trackName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--font-size-sm, 12px);
+}
+
+.trackArtist {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.trackItemActive .trackArtist {
+  color: rgba(0, 255, 0, 0.6);
+}
+
+/* === Track Duration === */
+
+.trackDuration {
+  flex-shrink: 0;
+  font-family: var(--led-font-family, 'Courier New', monospace);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  min-width: 36px;
+  text-align: right;
+}
+
+.trackItemActive .trackDuration {
+  color: rgba(0, 255, 0, 0.7);
+}
+
+.favoriteButton {
+  flex-shrink: 0;
+  align-self: center;
+  margin-right: var(--spacing-sm, 8px);
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.favoriteButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.favoriteButton:focus-visible {
+  outline: 2px solid var(--led-text-color, #00ff00);
+  outline-offset: 1px;
+}
+
+.favoriteButtonActive {
+  border-color: rgba(0, 255, 0, 0.45);
+  background: rgba(0, 255, 0, 0.12);
+  color: var(--led-text-color, #00ff00);
+}
+
+/* === Animation === */
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* === Responsive === */
+
+@media (max-width: 480px) {
+  .playlistPanel {
+    max-width: 100%;
+  }
+
+  .trackList {
+    max-height: 240px;
+  }
+
+  .header {
+    padding: var(--spacing-sm, 8px);
+    font-size: 11px;
+  }
+
+  .trackButton {
+    padding: var(--spacing-xs, 4px) var(--spacing-sm, 8px);
+    gap: var(--spacing-xs, 4px);
+  }
+
+  .favoriteButton {
+    margin-right: var(--spacing-xs, 4px);
+    padding: 5px 8px;
+    font-size: 9px;
+  }
+
+  .trackName {
+    font-size: 11px;
+  }
+}
+
+/* === Reduced Motion === */
+
+@media (prefers-reduced-motion: reduce) {
+  .playingIcon {
+    animation: none;
+  }
+
+  .content {
+    transition: none;
+  }
+}

@@ -1,0 +1,257 @@
+/**
+ * SkinSelector Component Styles
+ * CSS Module for tape skin selector with custom color support
+ */
+
+/* === Main Container === */
+
+.skinSelector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  padding: var(--spacing-sm, 8px) var(--spacing-md, 16px);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* === Label === */
+
+.label {
+  font-size: var(--font-size-sm, 12px);
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+/* === Skin List === */
+
+.skinList {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  overflow-x: auto;
+  padding: var(--spacing-xs, 4px) 0;
+
+  /* Hide scrollbar but keep scrolling */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.skinList::-webkit-scrollbar {
+  display: none;
+}
+
+/* === Skin Button === */
+
+.skinButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-xs, 4px);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+  min-width: 60px;
+  min-height: 44px;
+}
+
+.skinButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.skinButton:focus-visible {
+  outline: 2px solid var(--led-text-color, #00ff00);
+  outline-offset: 2px;
+}
+
+.skinButtonActive {
+  border-color: var(--led-text-color, #00ff00);
+  background: rgba(0, 255, 0, 0.08);
+}
+
+.skinButtonActive:hover {
+  background: rgba(0, 255, 0, 0.12);
+}
+
+/* === Skin Preview (Mini Cassette) === */
+
+.skinPreview {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  border-radius: 3px;
+  background: var(--skin-body-color, #1a1a1a);
+}
+
+.skinBody {
+  width: 16px;
+  height: 10px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.skinLabel {
+  width: 8px;
+  height: 4px;
+  border-radius: 1px;
+}
+
+.skinReel {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* === Skin Name === */
+
+.skinName {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.skinButtonActive .skinName {
+  color: var(--led-text-color, #00ff00);
+}
+
+/* === Custom Color Panel === */
+
+.customPanel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs, 4px);
+}
+
+.customToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--font-size-sm, 12px);
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.customToggle:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.customArrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+  font-size: 10px;
+}
+
+.customArrowOpen {
+  transform: rotate(90deg);
+}
+
+.customColors {
+  display: flex;
+  gap: var(--spacing-md, 16px);
+  padding: var(--spacing-xs, 4px) 0;
+}
+
+.colorField {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.colorLabel {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
+}
+
+.colorInput {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 2px;
+  background: transparent;
+  transition: border-color 0.15s ease;
+}
+
+.colorInput:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.colorInput::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.colorInput::-webkit-color-swatch {
+  border: none;
+  border-radius: 3px;
+}
+
+.colorInput::-moz-color-swatch {
+  border: none;
+  border-radius: 3px;
+}
+
+/* === Responsive === */
+
+@media (max-width: 480px) {
+  .skinSelector {
+    gap: var(--spacing-xs, 4px);
+    padding: var(--spacing-xs, 4px) var(--spacing-sm, 8px);
+  }
+
+  .label {
+    font-size: 10px;
+  }
+
+  .skinButton {
+    min-width: 52px;
+    padding: 4px;
+  }
+
+  .skinName {
+    font-size: 9px;
+  }
+
+  .customColors {
+    gap: var(--spacing-sm, 8px);
+  }
+
+  .colorInput {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* === Reduced Motion === */
+
+@media (prefers-reduced-motion: reduce) {
+  .skinButton {
+    transition: none;
+  }
+
+  .customArrow {
+    transition: none;
+  }
+}

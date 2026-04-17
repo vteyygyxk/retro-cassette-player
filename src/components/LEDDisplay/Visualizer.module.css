@@ -1,0 +1,97 @@
+/**
+ * Visualizer Component Styles
+ * CSS Module for LED-style audio frequency visualizer
+ */
+
+/* === Main Container === */
+
+.visualizer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--spacing-sm, 8px) 0;
+  min-height: 50px;
+  position: relative;
+}
+
+/* === Bars Container === */
+
+.barsContainer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  height: 40px;
+  width: 100%;
+}
+
+/* === Individual Bar === */
+
+.bar {
+  width: 10px;
+  height: var(--bar-height, 4%);
+  min-height: 4px;
+  max-height: 100%;
+  background: var(--led-text-color, #00ff00);
+  border-radius: 2px 2px 0 0;
+  opacity: 0.3;
+  transition: height 0.05s ease-out, opacity 0.1s ease;
+  box-shadow: 0 0 4px rgba(0, 255, 0, 0.3);
+}
+
+.bar.active {
+  opacity: calc(0.5 + var(--glow-intensity, 0) * 0.5);
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
+}
+
+/* === Glow Effect === */
+
+.visualizer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center bottom,
+    rgba(0, 255, 0, calc(var(--glow-intensity, 0) * 0.1)) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  opacity: calc(var(--glow-intensity, 0) * 0.5);
+}
+
+/* === Responsive Adjustments === */
+
+@media (max-width: 480px) {
+  .barsContainer {
+    height: 32px;
+    gap: 3px;
+  }
+
+  .bar {
+    width: 8px;
+  }
+}
+
+/* === Reduced Motion === */
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: none;
+  }
+}
+
+/* === High Contrast Mode === */
+
+@media (prefers-contrast: high) {
+  .bar {
+    background: var(--led-text-color, #00ff00);
+    box-shadow: none;
+  }
+
+  .bar.active {
+    opacity: 1;
+  }
+}

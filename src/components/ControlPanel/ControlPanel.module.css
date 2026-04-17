@@ -1,0 +1,602 @@
+/**
+ * ControlPanel Component Styles
+ * CSS Module for playback control panel
+ * Retro cassette recorder button design: 3D beveled rectangular push-buttons
+ * with metallic/chrome finish and tactile press animation
+ */
+
+/* === Main Container === */
+
+.controlPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 8px);
+  padding: var(--spacing-sm, 8px) 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* === Controls Row === */
+
+.controlsRow {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Secondary row with slightly smaller buttons and subtle separator */
+.secondaryRow {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 6px;
+  padding-top: 6px;
+  margin-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* === Control Button Base — Retro Push-Button === */
+
+.controlButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 38px;
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0;
+
+  /* 3D raised button effect — silver metallic */
+  background: linear-gradient(
+    180deg,
+    #d8d8d8 0%,
+    #c8c8c8 15%,
+    #b8b8b8 40%,
+    #b0b0b0 60%,
+    #a8a8a8 80%,
+    #a0a0a0 100%
+  );
+  color: #333;
+
+  box-shadow:
+    /* top highlight */
+    0 -1px 0 rgba(255, 255, 255, 0.6) inset,
+    /* left highlight */
+    -1px 0 0 rgba(255, 255, 255, 0.3) inset,
+    /* bottom edge — the "depth" of the button */
+    0 3px 0 0 #707070,
+    0 4px 0 0 #606060,
+    /* outer drop shadow */
+    0 5px 6px rgba(0, 0, 0, 0.3);
+  transition:
+    box-shadow 0.08s ease,
+    transform 0.08s ease,
+    background 0.1s ease;
+
+  /* Ensure touch target */
+  min-width: 42px;
+  min-height: 38px;
+}
+
+.controlButton:hover:not(:disabled) {
+  background: linear-gradient(
+    180deg,
+    #e8e8e8 0%,
+    #d8d8d8 15%,
+    #c8c8c8 40%,
+    #c0c0c0 60%,
+    #b8b8b8 80%,
+    #b0b0b0 100%
+  );
+  box-shadow:
+    0 -1px 0 rgba(255, 255, 255, 0.7) inset,
+    -1px 0 0 rgba(255, 255, 255, 0.4) inset,
+    0 3px 0 0 #787878,
+    0 4px 0 0 #686868,
+    0 5px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Pressed / active state — button sinks into the panel */
+.controlButton:active:not(:disabled) {
+  transform: translateY(3px);
+  background: linear-gradient(
+    180deg,
+    #a0a0a0 0%,
+    #959595 40%,
+    #8a8a8a 100%
+  );
+  box-shadow:
+    0 0 0 rgba(255, 255, 255, 0) inset,
+    0 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.controlButton:disabled {
+  background: linear-gradient(
+    180deg,
+    #909090 0%,
+    #858585 40%,
+    #7a7a7a 100%
+  );
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow:
+    0 -1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 2px 0 0 #606060,
+    0 3px 4px rgba(0, 0, 0, 0.2);
+}
+
+.controlButton:focus-visible {
+  outline: none;
+  box-shadow:
+    0 -1px 0 rgba(255, 255, 255, 0.6) inset,
+    -1px 0 0 rgba(255, 255, 255, 0.3) inset,
+    0 3px 0 0 #707070,
+    0 4px 0 0 #606060,
+    0 0 0 2px var(--focus-color, #4a90d9);
+}
+
+/* === Button Icon === */
+
+.buttonIcon {
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  /* Subtle emboss on icons */
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.3));
+}
+
+/* === Pressed-in active state (for seek / toggle buttons) === */
+
+.controlButton.pressed {
+  transform: translateY(3px);
+  background: linear-gradient(
+    180deg,
+    #888 0%,
+    #7d7d7d 40%,
+    #727272 100%
+  );
+  box-shadow:
+    0 0 0 rgba(255, 255, 255, 0) inset,
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* === Play Button (same size as other buttons) === */
+
+.playButton {
+  /* Dark silver / gunmetal for transport */
+  background: linear-gradient(
+    180deg,
+    #e0e0e0 0%,
+    #d0d0d0 15%,
+    #c0c0c0 40%,
+    #b8b8b8 60%,
+    #b0b0b0 80%,
+    #a8a8a8 100%
+  );
+  color: #1a1a1a;
+}
+
+.playButton:hover:not(:disabled) {
+  background: linear-gradient(
+    180deg,
+    #f0f0f0 0%,
+    #e0e0e0 15%,
+    #d0d0d0 40%,
+    #c8c8c8 60%,
+    #c0c0c0 80%,
+    #b8b8b8 100%
+  );
+}
+
+.playButton:disabled {
+  opacity: 0.45;
+}
+
+/* === Stop Button === */
+
+.stopButton {
+  /* Slightly warm tint — "stop" is often red-ish on real decks */
+  background: linear-gradient(
+    180deg,
+    #d8d0d0 0%,
+    #c8c0c0 15%,
+    #b8b0b0 40%,
+    #b0a8a8 60%,
+    #a8a0a0 80%,
+    #a09898 100%
+  );
+  color: #4a1a1a;
+  box-shadow:
+    0 -1px 0 rgba(255, 220, 220, 0.5) inset,
+    -1px 0 0 rgba(255, 220, 220, 0.25) inset,
+    0 3px 0 0 #807070,
+    0 4px 0 0 #706060,
+    0 5px 6px rgba(0, 0, 0, 0.3);
+}
+
+.stopButton:hover:not(:disabled) {
+  background: linear-gradient(
+    180deg,
+    #e8d8d8 0%,
+    #d8c8c8 15%,
+    #c8b8b8 40%,
+    #c0b0b0 60%,
+    #b8a8a8 80%,
+    #b0a0a0 100%
+  );
+}
+
+.stopButton:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    0 0 0 rgba(255, 255, 255, 0) inset,
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.stopButton:disabled {
+  opacity: 0.45;
+}
+
+/* === Pause Button === */
+
+.pauseButton {
+  background: linear-gradient(
+    180deg,
+    #d8d0c0 0%,
+    #c8c0b0 15%,
+    #b8b0a0 40%,
+    #b0a898 60%,
+    #a8a090 80%,
+    #a09888 100%
+  );
+  color: #3a2a1a;
+  box-shadow:
+    0 -1px 0 rgba(255, 230, 210, 0.5) inset,
+    -1px 0 0 rgba(255, 230, 210, 0.25) inset,
+    0 3px 0 0 #807060,
+    0 4px 0 0 #706050,
+    0 5px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pauseButton:hover:not(:disabled) {
+  background: linear-gradient(
+    180deg,
+    #e8d8c8 0%,
+    #d8c8b8 15%,
+    #c8b8a8 40%,
+    #c0b0a0 60%,
+    #b8a898 80%,
+    #b0a090 100%
+  );
+}
+
+.pauseButton:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    0 0 0 rgba(255, 255, 255, 0) inset,
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pauseButton:disabled {
+  opacity: 0.45;
+}
+
+/* === Fast Forward & Rewind Buttons === */
+
+.fastForwardButton,
+.rewindButton {
+  /* Cool blue-ish silver for transport controls */
+  background: linear-gradient(
+    180deg,
+    #d0d8e0 0%,
+    #c0c8d0 15%,
+    #b0b8c0 40%,
+    #a8b0b8 60%,
+    #a0a8b0 80%,
+    #98a0a8 100%
+  );
+  color: #1a2a3a;
+  box-shadow:
+    0 -1px 0 rgba(220, 230, 255, 0.5) inset,
+    -1px 0 0 rgba(220, 230, 255, 0.25) inset,
+    0 3px 0 0 #607080,
+    0 4px 0 0 #506070,
+    0 5px 6px rgba(0, 0, 0, 0.3);
+}
+
+.fastForwardButton:hover:not(:disabled),
+.rewindButton:hover:not(:disabled) {
+  background: linear-gradient(
+    180deg,
+    #e0e8f0 0%,
+    #d0d8e0 15%,
+    #c0c8d0 40%,
+    #b8c0c8 60%,
+    #b0b8c0 80%,
+    #a8b0b8 100%
+  );
+}
+
+.fastForwardButton:active:not(:disabled),
+.rewindButton:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    0 0 0 rgba(255, 255, 255, 0) inset,
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.fastForwardButton:disabled,
+.rewindButton:disabled {
+  opacity: 0.45;
+}
+
+/* Active / pressed-in seek state */
+.fastForwardButton.pressed,
+.rewindButton.pressed {
+  transform: translateY(3px);
+  background: linear-gradient(
+    180deg,
+    #8090a0 0%,
+    #758090 40%,
+    #6a7585 100%
+  );
+  box-shadow:
+    0 0 0 rgba(255, 255, 255, 0) inset,
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 2px rgba(0, 0, 0, 0.35);
+  color: #cde;
+}
+
+/* === Prev & Next Buttons === */
+
+.prevButton,
+.nextButton {
+  /* Slightly warmer gray for navigation */
+  background: linear-gradient(
+    180deg,
+    #d5d0d8 0%,
+    #c5c0c8 15%,
+    #b5b0b8 40%,
+    #ada8b0 60%,
+    #a5a0a8 80%,
+    #9d98a0 100%
+  );
+  color: #2a1a2a;
+  box-shadow:
+    0 -1px 0 rgba(240, 225, 245, 0.5) inset,
+    -1px 0 0 rgba(240, 225, 245, 0.25) inset,
+    0 3px 0 0 #706070,
+    0 4px 0 0 #605060,
+    0 5px 6px rgba(0, 0, 0, 0.3);
+}
+
+.prevButton:hover:not(:disabled),
+.nextButton:hover:not(:disabled) {
+  background: linear-gradient(
+    180deg,
+    #e5e0e8 0%,
+    #d5d0d8 15%,
+    #c5c0c8 40%,
+    #bdb8c0 60%,
+    #b5b0b8 80%,
+    #ada8b0 100%
+  );
+}
+
+.prevButton:active:not(:disabled),
+.nextButton:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    0 0 0 rgba(255, 255, 255, 0) inset,
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.prevButton:disabled,
+.nextButton:disabled {
+  opacity: 0.45;
+}
+
+/* === Eject Button === */
+
+.ejectButton {
+  background: linear-gradient(
+    180deg,
+    #b8b8b8 0%,
+    #a8a8a8 15%,
+    #989898 40%,
+    #909090 60%,
+    #888888 80%,
+    #808080 100%
+  );
+  color: #333;
+}
+
+.ejectButton:hover:not(:disabled) {
+  background: linear-gradient(
+    180deg,
+    #c8c8c8 0%,
+    #b8b8b8 15%,
+    #a8a8a8 40%,
+    #a0a0a0 60%,
+    #989898 80%,
+    #909090 100%
+  );
+}
+
+.ejectButton:disabled {
+  opacity: 0.45;
+}
+
+/* === Play Mode Button === */
+
+.playModeButton {
+  /* Green-ish silver for mode control */
+  background: linear-gradient(
+    180deg,
+    #c8d8c8 0%,
+    #b8c8b8 15%,
+    #a8b8a8 40%,
+    #a0b0a0 60%,
+    #98a898 80%,
+    #90a090 100%
+  );
+  color: #1a3a1a;
+}
+
+.playModeButton:hover:not(:disabled) {
+  background: linear-gradient(
+    180deg,
+    #d8e8d8 0%,
+    #c8d8c8 15%,
+    #b8c8b8 40%,
+    #b0c0b0 60%,
+    #a8b8a8 80%,
+    #a0b0a0 100%
+  );
+}
+
+.playModeButton:disabled {
+  opacity: 0.45;
+}
+
+/* Active mode styles */
+.playModeButton[data-mode="loop"] {
+  background: linear-gradient(
+    180deg,
+    #c8d8d0 0%,
+    #b8c8c0 15%,
+    #a8b8b0 40%,
+    #a0b0a8 60%,
+    #98a8a0 80%,
+    #90a098 100%
+  );
+}
+
+.playModeButton[data-mode="single"] {
+  background: linear-gradient(
+    180deg,
+    #d0d0e0 0%,
+    #c0c0d0 15%,
+    #b0b0c0 40%,
+    #a8a8b8 60%,
+    #a0a0b0 80%,
+    #9898a8 100%
+  );
+}
+
+.playModeButton[data-mode="shuffle"] {
+  background: linear-gradient(
+    180deg,
+    #e0d0c8 0%,
+    #d0c0b8 15%,
+    #c0b0a8 40%,
+    #b8a8a0 60%,
+    #b0a098 80%,
+    #a89890 100%
+  );
+}
+
+/* === Responsive Adjustments === */
+
+@media (max-width: 480px) {
+  .controlPanel {
+    padding: var(--spacing-xs, 4px) 0;
+    gap: var(--spacing-xs, 4px);
+  }
+
+  .controlsRow {
+    gap: 4px;
+  }
+
+  .controlButton {
+    width: 38px;
+    height: 34px;
+    min-width: 38px;
+    min-height: 34px;
+  }
+
+  .buttonIcon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* === High Contrast Mode === */
+
+@media (prefers-contrast: high) {
+  .controlButton {
+    border: 2px solid #fff;
+  }
+
+  .controlButton:disabled {
+    border-color: #666;
+  }
+}
+
+/* === Reduced Motion === */
+
+@media (prefers-reduced-motion: reduce) {
+  .controlButton {
+    transition: none;
+  }
+}
+
+/* === Tooltip === */
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: #333;
+  color: #fff;
+  font-size: 12px;
+  font-weight: normal;
+  white-space: nowrap;
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Tooltip arrow */
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #333;
+}
+
+.controlButton:hover:not(:disabled) .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Responsive tooltip */
+@media (max-width: 480px) {
+  .tooltip {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}

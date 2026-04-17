@@ -1,0 +1,223 @@
+/**
+ * VolumeKnob Component Styles
+ * CSS Module for rotary volume control knob
+ */
+
+/* === Main Container === */
+
+.volumeKnob {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  user-select: none;
+  touch-action: none;
+}
+
+.volumeKnob.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* === Volume Label === */
+
+.volumeLabel {
+  font-family: var(--led-font-family, 'Courier New', monospace);
+  font-size: var(--font-size-sm, 12px);
+  color: var(--led-text-color, #00ff00);
+  background: var(--led-bg-color, #001100);
+  padding: 2px 8px;
+  border-radius: 4px;
+  min-width: 48px;
+  text-align: center;
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+  letter-spacing: 1px;
+}
+
+/* === Knob Container === */
+
+.knobContainer {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === Tick Marks === */
+
+.tickMarks {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.tick {
+  position: absolute;
+  width: 2px;
+  height: 8px;
+  background: #555;
+  left: 50%;
+  top: 0;
+  transform-origin: center 40px;
+  border-radius: 1px;
+  transition: background-color 0.15s ease;
+}
+
+.tickActive {
+  background: var(--led-text-color, #00ff00);
+  box-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
+}
+
+/* === Knob === */
+
+.knob {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(
+    145deg,
+    #4a4a4a 0%,
+    #3a3a3a 30%,
+    #2a2a2a 70%,
+    #1a1a1a 100%
+  );
+  cursor: pointer;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.15s ease;
+  /* Ensure touch target size */
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.volumeKnob:not(.disabled) .knob:hover {
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.5),
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.volumeKnob.dragging .knob {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  cursor: grabbing;
+}
+
+.knob:focus-visible {
+  outline: none;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    0 0 0 3px var(--focus-color, #4a90d9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* === Knob Indicator === */
+
+.indicator {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 12px;
+  background: var(--led-text-color, #00ff00);
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(0, 255, 0, 0.6);
+}
+
+/* === Center Dot === */
+
+.centerDot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #555, #222);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* === Mute Indicator === */
+
+.muteIndicator {
+  font-size: 16px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* === Responsive Adjustments === */
+
+@media (max-width: 480px) {
+  .knobContainer {
+    width: 70px;
+    height: 70px;
+  }
+
+  .knob {
+    width: 52px;
+    height: 52px;
+  }
+
+  .tick {
+    height: 6px;
+    transform-origin: center 35px;
+  }
+
+  .indicator {
+    top: 6px;
+    height: 10px;
+  }
+
+  .volumeLabel {
+    font-size: 10px;
+    min-width: 40px;
+  }
+}
+
+/* === High Contrast Mode === */
+
+@media (prefers-contrast: high) {
+  .knob {
+    border: 2px solid #fff;
+  }
+
+  .indicator {
+    background: #fff;
+  }
+
+  .tickActive {
+    background: #fff;
+  }
+}
+
+/* === Reduced Motion === */
+
+@media (prefers-reduced-motion: reduce) {
+  .knob {
+    transition: none;
+  }
+
+  .muteIndicator {
+    animation: none;
+  }
+}

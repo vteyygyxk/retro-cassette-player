@@ -1,0 +1,493 @@
+/**
+ * TapeDeck Component Styles
+ * CSS Module for cassette tape visualization
+ * Realistic 3D cassette tape with depth, texture, and mechanical details
+ */
+
+/* === Main Container === */
+
+.tapeDeck {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  perspective: 1200px;
+}
+
+.tapeDeckInner {
+  position: relative;
+  width: 100%;
+}
+
+/* === Cassette Body === */
+
+.cassetteBody {
+  position: relative;
+  width: 100%;
+  padding: 16px 12px 20px;
+  border-radius: 10px;
+  box-shadow:
+    /* outer shadow - depth */
+    0 6px 16px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    /* top highlight */
+    inset 0 2px 0 rgba(255, 255, 255, 0.15),
+    /* bottom shadow */
+    inset 0 -2px 0 rgba(0, 0, 0, 0.3),
+    /* inner bevel left */
+    inset 2px 0 0 rgba(255, 255, 255, 0.05),
+    /* inner bevel right */
+    inset -2px 0 0 rgba(0, 0, 0, 0.15);
+  transition:
+    background-color var(--skin-transition-duration) ease,
+    transform var(--skin-transition-duration) ease;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Glossy overlay */
+.cassetteBody::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.04) 30%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.06) 80%,
+      rgba(0, 0, 0, 0.12) 100%
+    );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Plastic texture */
+.cassetteBody::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(255,255,255,0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.02) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cassetteBodyChanging {
+  animation: tapeChange 0.5s ease-in-out;
+}
+
+@keyframes tapeChange {
+  0% {
+    transform: translateY(0) rotateX(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-10px) rotateX(10deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0) rotateX(0);
+    opacity: 1;
+  }
+}
+
+/* === Label Strips === */
+
+.labelStrip {
+  height: 28px;
+  margin: 6px 8px;
+  border-radius: 3px;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.15),
+    0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: background-color var(--skin-transition-duration) ease;
+  position: relative;
+  z-index: 3;
+}
+
+/* Embossed line on label */
+.labelStrip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* === Cassette Content === */
+
+.cassetteContent {
+  position: relative;
+  padding: 8px 0;
+  z-index: 3;
+}
+
+/* === Reels Container === */
+
+.reelsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  margin: 0 8px;
+  position: relative;
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Tape between reels */
+.reelsContainer::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 25%;
+  right: 25%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(80, 40, 20, 0.6),
+    rgba(60, 30, 15, 0.8),
+    rgba(80, 40, 20, 0.6)
+  );
+  transform: translateY(-1px);
+  z-index: 0;
+  border-radius: 1px;
+}
+
+.reelWrapper {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* === Reel === */
+
+.reel {
+  position: relative;
+  border-radius: 50%;
+  box-shadow:
+    /* outer ring - 3D effect */
+    0 3px 8px rgba(0, 0, 0, 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    /* inner ring shadow */
+    inset 0 2px 3px rgba(0, 0, 0, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.reelHub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28%;
+  height: 28%;
+  background: radial-gradient(
+    circle at 40% 35%,
+    #666 0%,
+    #444 40%,
+    #2a2a2a 100%
+  );
+  border-radius: 50%;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+/* Hex hole in hub */
+.reelHub::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 45%;
+  height: 45%;
+  background: #1a1a1a;
+  border-radius: 2px;
+  transform: translate(-50%, -50%) rotate(30deg);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.reelSpokes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.reelSpoke {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 38%;
+  background: rgba(0, 0, 0, 0.25);
+  transform-origin: center top;
+}
+
+/* === Album Cover === */
+
+.albumCover {
+  flex: 1;
+  max-width: 90px;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: transform var(--skin-transition-duration) ease;
+  position: relative;
+  z-index: 1;
+}
+
+.albumCoverChanging {
+  animation: coverChange 0.5s ease-in-out;
+}
+
+@keyframes coverChange {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+}
+
+.albumCoverImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* === Tape Window === */
+
+.tapeWindow {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 55%;
+  height: 10px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.4) 0%,
+      rgba(0, 0, 0, 0.5) 100%
+    );
+  border-radius: 3px;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  z-index: 3;
+}
+
+/* Screw holes */
+.tapeWindow::before,
+.tapeWindow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle at 40% 40%, #555, #333);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.tapeWindow::before {
+  left: -14px;
+}
+
+.tapeWindow::after {
+  right: -14px;
+}
+
+/* === Progress Container === */
+
+.progressContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+  z-index: 3;
+}
+
+/* Interactive progress bar — enlarged click/drag area */
+.progressInteractive {
+  cursor: pointer;
+  overflow: visible;
+}
+
+/* Expand the clickable area vertically via pseudo-element */
+.progressInteractive::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+}
+
+.progressInteractive:hover {
+  height: 6px;
+}
+
+.progressInteractive:hover .progressBar {
+  opacity: 0.9;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.progressDragging {
+  height: 6px;
+}
+
+.progressDragging .progressBar {
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.progressBar {
+  height: 100%;
+  background: var(--tape-label-color);
+  opacity: 0.6;
+  transition: width 0.05s linear, opacity 0.15s ease;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+/* Drag handle dot */
+.progressHandle {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.15s ease;
+  pointer-events: none;
+}
+
+.progressInteractive:hover .progressHandle,
+.progressDragging .progressHandle {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* === Corner Screws === */
+
+.screwHole {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle at 40% 40%, #555, #2a2a2a);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  z-index: 4;
+}
+
+.screwHoleTopLeft {
+  top: 6px;
+  left: 6px;
+}
+
+.screwHoleTopRight {
+  top: 6px;
+  right: 6px;
+}
+
+.screwHoleBottomLeft {
+  bottom: 8px;
+  left: 6px;
+}
+
+.screwHoleBottomRight {
+  bottom: 8px;
+  right: 6px;
+}
+
+/* === Responsive Adjustments === */
+
+@media (max-width: 480px) {
+  .tapeDeck {
+    max-width: 100%;
+  }
+
+  .cassetteBody {
+    padding: 12px 8px 16px;
+  }
+
+  .reelsContainer {
+    gap: var(--spacing-sm);
+    padding: 8px 12px;
+    margin: 0 4px;
+  }
+
+  .labelStrip {
+    height: 20px;
+    margin: 4px 6px;
+  }
+
+  .tapeWindow {
+    height: 8px;
+    bottom: 20px;
+    width: 50%;
+  }
+}
+
+/* === Skin-specific overrides === */
+
+[data-skin="classic-black"] .cassetteBody {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-skin="retro-brown"] .cassetteBody {
+  border-color: rgba(101, 67, 33, 0.5);
+}
+
+[data-skin="neon-pink"] .cassetteBody {
+  border-color: rgba(255, 105, 180, 0.3);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(255, 20, 147, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.3),
+    inset 2px 0 0 rgba(255, 255, 255, 0.08),
+    inset -2px 0 0 rgba(0, 0, 0, 0.15);
+}

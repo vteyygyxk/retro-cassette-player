@@ -1,0 +1,241 @@
+/**
+ * MusicSearchPanel Component Styles
+ * CSS Module for online music search panel with retro LED theme
+ * Uses Netease Music public API directly — no configuration needed
+ */
+
+/* === Main Container === */
+
+.searchPanel {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* === Search Bar === */
+
+.searchBar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.searchInput {
+  flex: 1;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: #ccc;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.searchInput:focus {
+  border-color: var(--led-text-color, #00ff00);
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.searchInput:disabled {
+  opacity: 0.5;
+}
+
+.searchButton {
+  padding: 6px 14px;
+  background: rgba(0, 255, 0, 0.15);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  border-radius: 4px;
+  color: var(--led-text-color, #00ff00);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.searchButton:hover:not(:disabled) {
+  background: rgba(0, 255, 0, 0.25);
+}
+
+.searchButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.clearButton {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.clearButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* === Error Message === */
+
+.errorMessage {
+  padding: 8px 12px;
+  font-size: 11px;
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.08);
+}
+
+/* === Results List === */
+
+.resultsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.resultItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background-color 0.15s ease;
+}
+
+.resultItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.resultItem:last-child {
+  border-bottom: none;
+}
+
+/* === Result Info === */
+
+.resultInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.resultName {
+  font-size: 12px;
+  color: #ccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.resultMeta {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* === VIP Song Styles === */
+
+.vipItem {
+  opacity: 0.7;
+}
+
+.vipItem .resultName {
+  color: rgba(255, 215, 0, 0.9);
+}
+
+.vipTag {
+  display: inline-block;
+  padding: 1px 5px;
+  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+  color: #1a1a1a;
+  font-size: 9px;
+  font-weight: bold;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.vipHint {
+  font-size: 10px;
+  color: rgba(255, 215, 0, 0.7);
+  white-space: nowrap;
+}
+
+/* === Result Actions === */
+
+.resultActions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.actionButton {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.actionButton:hover:not(:disabled) {
+  background: rgba(0, 255, 0, 0.12);
+  border-color: rgba(0, 255, 0, 0.3);
+  color: var(--led-text-color, #00ff00);
+}
+
+.actionButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* === Loading === */
+
+.loading {
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* === Responsive === */
+
+@media (max-width: 480px) {
+  .searchBar {
+    padding: 8px;
+  }
+
+  .resultItem {
+    padding: 6px 8px;
+  }
+
+  .resultsList {
+    max-height: 200px;
+  }
+}

@@ -1,0 +1,91 @@
+/**
+ * CSS Variables for Retro Cassette Player
+ * Design tokens for theming and skin system
+ */
+
+:root {
+  /* === 磁带颜色 (Tape Colors) === */
+  --tape-body-color: #1a1a1a;
+  --tape-body-gradient: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  --tape-reel-color: #333333;
+  --tape-reel-pattern: repeating-conic-gradient(from 0deg, #444 0deg 30deg, #333 30deg 60deg);
+  --tape-label-color: #f5f5f5;
+  --tape-label-pattern: none;
+
+  /* === LED 显示屏颜色 (LED Display Colors) === */
+  --led-bg-color: #001100;
+  --led-text-color: #00ff00;
+  --led-glow: 0 0 10px rgba(0, 255, 0, 0.5);
+  --led-font-family: 'Courier New', monospace;
+
+  /* === 按钮颜色 (Button Colors) === */
+  --button-bg: #c0c0c0;
+  --button-bg-hover: #d0d0d0;
+  --button-active: #888888;
+  --button-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  --button-border-radius: 4px;
+
+  /* === 播放器外壳颜色 (Player Body Colors) === */
+  --player-body-bg: #2d2d2d;
+  --player-body-gradient: linear-gradient(180deg, #3d3d3d, #2d2d2d);
+  --player-border: #1a1a1a;
+  --player-border-radius: 12px;
+
+  /* === 动画速度 (Animation Speeds) === */
+  --reel-rotation-duration: 2s;
+  --skin-transition-duration: 200ms;
+  --button-transition-duration: 100ms;
+
+  /* === 间距 (Spacing) === */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* === 字体 (Typography) === */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  --font-size-sm: 12px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 20px;
+
+  /* === 阴影 (Shadows) === */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+
+  /* === 断点 (Breakpoints) === */
+  --breakpoint-mobile: 480px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+
+  /* === 触摸目标尺寸 (Touch Target Size) === */
+  --touch-target-min: 44px;
+}
+
+/* === 皮肤变体 (Skin Variants) === */
+
+/* 经典黑 (Classic Black) - Default */
+[data-skin="classic-black"] {
+  --tape-body-color: #1a1a1a;
+  --tape-body-gradient: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  --tape-reel-color: #333333;
+  --tape-label-color: #f5f5f5;
+}
+
+/* 复古棕 (Retro Brown) */
+[data-skin="retro-brown"] {
+  --tape-body-color: #8B4513;
+  --tape-body-gradient: linear-gradient(145deg, #a0522d, #8B4513);
+  --tape-reel-color: #654321;
+  --tape-label-color: #f5deb3;
+}
+
+/* 霓虹粉 (Neon Pink) */
+[data-skin="neon-pink"] {
+  --tape-body-color: #ff1493;
+  --tape-body-gradient: linear-gradient(145deg, #ff69b4, #ff1493);
+  --tape-reel-color: #ff69b4;
+  --tape-label-color: #ffffff;
+}

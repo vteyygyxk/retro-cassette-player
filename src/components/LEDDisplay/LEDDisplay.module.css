@@ -1,0 +1,346 @@
+/**
+ * LEDDisplay Component Styles
+ * CSS Module for retro LED display panel
+ */
+
+/* === Main Container === */
+
+.ledDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 4px);
+  padding: var(--spacing-md, 12px) var(--spacing-lg, 16px);
+  background: var(--led-bg-color, #001100);
+  border-radius: 0;
+  box-shadow:
+    inset 0 3px 10px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(255, 255, 255, 0.06);
+  font-family: var(--led-font-family, 'Courier New', monospace);
+  width: 100%;
+  min-width: 240px;
+  min-height: 120px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.08);
+}
+
+/* LED glow effect overlay */
+.ledDisplay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 255, 0, 0.04) 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+  pointer-events: none;
+}
+
+/* Scanline effect */
+.ledDisplay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* === Track Info Section === */
+
+.trackInfo {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  overflow: hidden;
+  position: relative;
+}
+
+.trackName {
+  color: var(--led-text-color, #00ff00);
+  font-size: var(--font-size-md, 14px);
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.trackName.scrolling {
+  animation: scrollText 8s linear infinite;
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.trackNameScroll {
+  display: inline-block;
+  padding-right: var(--spacing-xl, 32px);
+}
+
+.noTrack {
+  color: var(--led-text-color, #00ff00);
+  font-size: var(--font-size-md, 14px);
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+  opacity: 0.6;
+}
+
+/* === Time Display Section === */
+
+.timeDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm, 8px);
+}
+
+.currentTime,
+.totalTime {
+  color: var(--led-text-color, #00ff00);
+  font-size: var(--font-size-xl, 20px);
+  font-weight: bold;
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+  letter-spacing: 2px;
+  min-width: 60px;
+}
+
+.currentTime {
+  text-align: left;
+}
+
+.totalTime {
+  text-align: right;
+  opacity: 0.7;
+}
+
+.timeSeparator {
+  color: var(--led-text-color, #00ff00);
+  font-size: var(--font-size-lg, 16px);
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+  opacity: 0.5;
+}
+
+/* Volume Display */
+.volumeDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs, 4px);
+}
+
+.volumeLabel {
+  color: var(--led-text-color, #00ff00);
+  font-size: var(--font-size-md, 14px);
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+  opacity: 0.8;
+}
+
+.volumeValue {
+  color: var(--led-text-color, #00ff00);
+  font-size: var(--font-size-xl, 20px);
+  font-weight: bold;
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+  min-width: 40px;
+  text-align: center;
+}
+
+.volumeMax {
+  color: var(--led-text-color, #00ff00);
+  font-size: var(--font-size-xl, 20px);
+  font-weight: bold;
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+}
+
+.volumeBar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: var(--spacing-sm, 8px);
+}
+
+.volumeSegment {
+  width: 4px;
+  height: 12px;
+  background: rgba(0, 255, 0, 0.2);
+  border-radius: 1px;
+  transition: background-color 0.1s ease;
+}
+
+.volumeSegment.active {
+  background: var(--led-text-color, #00ff00);
+  box-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
+}
+
+/* === Status Indicator Section === */
+
+.statusIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md, 16px);
+  min-height: 20px;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: var(--font-size-sm, 12px);
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.statusBadge.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.statusBadge.ff {
+  color: var(--led-text-color, #00ff00);
+  background: rgba(0, 255, 0, 0.15);
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+  animation: pulse 0.5s ease-in-out infinite;
+}
+
+.statusBadge.rew {
+  color: var(--led-text-color, #00ff00);
+  background: rgba(0, 255, 0, 0.15);
+  text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
+  animation: pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Playing indicator */
+.playingIndicator {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.playingDot {
+  width: 4px;
+  height: 4px;
+  background: var(--led-text-color, #00ff00);
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(0, 255, 0, 0.5);
+  animation: blink 1s ease-in-out infinite;
+}
+
+.playingDot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.playingDot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* === No Track State === */
+
+.ledDisplay.noTrack .trackName,
+.ledDisplay.noTrack .currentTime,
+.ledDisplay.noTrack .totalTime {
+  opacity: 0.4;
+}
+
+/* === Responsive Adjustments === */
+
+@media (max-width: 480px) {
+  .ledDisplay {
+    padding: var(--spacing-sm, 8px);
+    min-width: 200px;
+  }
+
+  .trackName {
+    font-size: var(--font-size-sm, 12px);
+  }
+
+  .currentTime,
+  .totalTime {
+    font-size: var(--font-size-lg, 16px);
+  }
+
+  .volumeValue {
+    font-size: var(--font-size-lg, 16px);
+  }
+
+  .volumeSegment {
+    width: 3px;
+    height: 10px;
+  }
+}
+
+/* === High Contrast Mode === */
+
+@media (prefers-contrast: high) {
+  .ledDisplay {
+    border: 2px solid var(--led-text-color, #00ff00);
+  }
+
+  .trackName,
+  .currentTime,
+  .totalTime,
+  .volumeValue,
+  .statusBadge {
+    text-shadow: none;
+  }
+}
+
+/* === Reduced Motion === */
+
+@media (prefers-reduced-motion: reduce) {
+  .trackName.scrolling {
+    animation: none;
+  }
+
+  .statusBadge.ff,
+  .statusBadge.rew {
+    animation: none;
+  }
+
+  .playingDot {
+    animation: none;
+  }
+}
