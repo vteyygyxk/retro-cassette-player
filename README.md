@@ -2,6 +2,9 @@
 
 一款怀旧风格的网页音乐播放器，模拟经典磁带录音机的视觉和交互体验。
 
+<img width="931" height="832" alt="image" src="https://github.com/user-attachments/assets/011e7e44-4fd6-43ae-aaae-a9996ca1cf40" />
+
+
 ## 功能特性
 
 ### 播放控制
