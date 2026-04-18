@@ -66,8 +66,15 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  max-height: 400px;
+  max-height: 220px; /* 约5首歌曲高度 */
   overflow-y: auto;
+  /* 隐藏滚动条但保持滚动功能 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.trackList::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .trackItem {
@@ -75,7 +82,7 @@
   display: flex;
   align-items: stretch;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: background-color 0.15s ease;
+  transition: all 0.2s ease;
   overflow: hidden;
 }
 
@@ -84,15 +91,46 @@
 }
 
 .trackItem:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.trackItem:hover::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(0, 255, 0, 0.4);
 }
 
 .trackItemActive {
-  background: rgba(0, 255, 0, 0.08);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 0, 0.12) 0%,
+    rgba(0, 255, 0, 0.06) 40%,
+    transparent 100%
+  );
+}
+
+.trackItemActive::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--led-text-color, #00ff00);
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.6), 0 0 16px rgba(0, 255, 0, 0.3);
 }
 
 .trackItemActive:hover {
-  background: rgba(0, 255, 0, 0.12);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 0, 0.18) 0%,
+    rgba(0, 255, 0, 0.1) 40%,
+    rgba(0, 255, 0, 0.04) 100%
+  );
 }
 
 .swipeForeground {
@@ -207,12 +245,18 @@
   justify-content: center;
   line-height: 1;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .actionButton:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
   color: #ffffff;
+  transform: scale(1.05);
+}
+
+.actionButton:active {
+  transform: scale(0.95);
 }
 
 .actionButton:focus-visible {
@@ -221,9 +265,23 @@
 }
 
 .actionButtonActive {
-  border-color: rgba(239, 68, 68, 0.35);
-  background: rgba(239, 68, 68, 0.08);
-  color: #ef4444;
+  border-color: rgba(0, 255, 0, 0.4);
+  background: rgba(0, 255, 0, 0.12);
+  color: var(--led-text-color, #00ff00);
+  box-shadow:
+    0 0 10px rgba(0, 255, 0, 0.4),
+    0 0 20px rgba(0, 255, 0, 0.2),
+    inset 0 0 8px rgba(0, 255, 0, 0.1);
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
+}
+
+.actionButtonActive:hover {
+  background: rgba(0, 255, 0, 0.18);
+  border-color: rgba(0, 255, 0, 0.6);
+  box-shadow:
+    0 0 14px rgba(0, 255, 0, 0.5),
+    0 0 28px rgba(0, 255, 0, 0.3),
+    inset 0 0 10px rgba(0, 255, 0, 0.15);
 }
 
 .swipeActionButton {
@@ -247,6 +305,48 @@
   outline-offset: -2px;
 }
 
+/* === Scroll Hint === */
+
+.scrollHint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(0, 0, 0, 0.25) 100%
+  );
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s ease;
+}
+
+.scrollHintIcon {
+  font-size: 10px;
+  animation: bounce 1.5s ease-in-out infinite;
+  color: rgba(0, 255, 0, 0.6);
+}
+
+.scrollHintText {
+  font-family: var(--font-family-base, sans-serif);
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 0.5;
+  }
+}
+
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -258,7 +358,7 @@
 
 @media (max-width: 480px) {
   .trackList {
-    max-height: 240px;
+    max-height: 200px; /* 移动端约5首歌曲高度 */
   }
 
   .header {
@@ -285,10 +385,19 @@
   .trackName {
     font-size: 11px;
   }
+
+  .scrollHint {
+    padding: 8px 12px;
+    font-size: 10px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .playingIcon {
+    animation: none;
+  }
+
+  .scrollHintIcon {
     animation: none;
   }
 

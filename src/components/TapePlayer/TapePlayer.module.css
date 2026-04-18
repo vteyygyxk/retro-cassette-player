@@ -311,24 +311,6 @@
   opacity: 0.8;
 }
 
-/* === Add Files Button === */
-
-.addFilesButton {
-  display: inline-block;
-  padding: var(--spacing-xs, 4px) var(--spacing-md, 16px);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.5);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: var(--font-size-sm, 12px);
-  transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.addFilesLabel:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.8);
-}
-
 /* === Online Search Link (drop zone) === */
 
 .onlineSearchLink {
@@ -401,10 +383,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .fileButton {
-    transition: none;
-  }
-
-  .addFilesButton {
     transition: none;
   }
 }

@@ -474,16 +474,6 @@ export function TapePlayer() {
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
         >
-          {/* Hidden file input */}
-          <input
-            type="file"
-            id="tape-player-file-input"
-            accept=".mp3,.wav,.ogg,.flac,.jpg,.jpeg,.png,.webp"
-            multiple
-            onChange={handleFileSelect}
-            style={{ display: 'none' }}
-          />
-
           {/* Hidden lyrics file input */}
           <input
             ref={lyricsFileInputRef}

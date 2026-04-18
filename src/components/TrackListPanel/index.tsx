@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Track } from '../../types';
 import styles from './TrackListPanel.module.css';
 
@@ -47,6 +47,39 @@ export function TrackListPanel({
     startX: number;
     offset: number;
   } | null>(null);
+  const [showScrollHint, setShowScrollHint] = useState(false);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  const MAX_VISIBLE_TRACKS = 5;
+
+  // Check if scroll hint should be shown
+  useEffect(() => {
+    const listElement = listRef.current;
+    if (!listElement) {
+      setShowScrollHint(false);
+      return;
+    }
+
+    const checkScroll = () => {
+      if (tracks.length <= MAX_VISIBLE_TRACKS) {
+        setShowScrollHint(false);
+        return;
+      }
+
+      const { scrollTop, scrollHeight, clientHeight } = listElement;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+      setShowScrollHint(!isAtBottom);
+    };
+
+    // Initial check
+    checkScroll();
+
+    // Add scroll listener
+    listElement.addEventListener('scroll', checkScroll);
+    return () => listElement.removeEventListener('scroll', checkScroll);
+  }, [tracks.length, isExpanded]);
+
+  const remainingCount = Math.max(0, tracks.length - MAX_VISIBLE_TRACKS);
 
   return (
     <div
@@ -86,7 +119,7 @@ export function TrackListPanel({
                 {emptyHint ? <p className={styles.emptyHint}>{emptyHint}</p> : null}
               </div>
             ) : (
-              <ul className={styles.trackList}>
+              <ul className={styles.trackList} ref={listRef}>
                 {tracks.map((track, index) => {
                   const action = getAction?.(track, index) ?? null;
                   const swipeAction = getSwipeAction?.(track, index) ?? null;
@@ -215,6 +248,12 @@ export function TrackListPanel({
                   );
                 })}
               </ul>
+            )}
+            {showScrollHint && tracks.length > 0 && (
+              <div className={styles.scrollHint} aria-hidden="true">
+                <span className={styles.scrollHintIcon}>↓</span>
+                <span className={styles.scrollHintText}>还有 {remainingCount} 首，滚动查看</span>
+              </div>
             )}
           </motion.div>
         )}

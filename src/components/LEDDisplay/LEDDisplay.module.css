@@ -63,10 +63,11 @@
 /* === Track Info Section === */
 
 .trackInfo {
-  display: block;
+  display: flex;
+  align-items: center;
   min-height: 24px;
-  position: relative;
   overflow: hidden;
+  position: relative;
 }
 
 .trackName {
@@ -74,23 +75,13 @@
   font-size: var(--font-size-md, 14px);
   text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
   white-space: nowrap;
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-}
-
-/* Normal display text (not scrolling) */
-.trackNameDisplay {
-  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .trackName.scrolling {
-  display: inline-flex;
-  animation: scrollText 12s linear infinite;
-  width: max-content;
-  overflow: visible;
+  animation: scrollText 8s linear infinite;
 }
 
 @keyframes scrollText {
@@ -104,8 +95,7 @@
 
 .trackNameScroll {
   display: inline-block;
-  padding-right: 200px;
-  white-space: nowrap;
+  padding-right: var(--spacing-xl, 32px);
 }
 
 .noTrack {

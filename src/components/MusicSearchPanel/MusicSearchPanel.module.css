@@ -120,11 +120,19 @@
 }
 
 .randomPlayIcon {
-  font-size: 14px;
-  line-height: 1;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.randomPlayButton:disabled .randomPlayIcon {
+.randomPlayIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.spinIcon {
   animation: spin 1s linear infinite;
 }
 
