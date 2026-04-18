@@ -1,0 +1,488 @@
+/**
+ * TodayHitsPanel Component Styles
+ * 复古磁带风格的今日主打歌模块
+ */
+
+/* === 主容器 === */
+
+.panel {
+  width: 100%;
+  background: linear-gradient(
+    180deg,
+    #1a1a1a 0%,
+    #0d0d0d 100%
+  );
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* === 标题区域 - 磁带标签风格 === */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(
+    90deg,
+    rgba(180, 130, 80, 0.15) 0%,
+    rgba(200, 150, 100, 0.1) 50%,
+    rgba(180, 130, 80, 0.15) 100%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+
+.header::before,
+.header::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle at 40% 40%, #666, #333);
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.header::before {
+  left: 8px;
+  transform: translateY(-50%);
+}
+
+.header::after {
+  right: 8px;
+  transform: translateY(-50%);
+}
+
+.headerIcon {
+  font-size: 16px;
+  color: rgba(255, 200, 150, 0.8);
+  text-shadow: 0 0 8px rgba(255, 180, 100, 0.4);
+}
+
+.headerTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 220, 180, 0.9);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: var(--font-family-base);
+}
+
+.headerDate {
+  margin-left: auto;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: var(--led-font-family, 'Courier New', monospace);
+}
+
+/* === 加载状态 === */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}
+
+.loadingSpinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--led-text-color, #00ff00);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === 错误状态 === */
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 30px 20px;
+  color: rgba(255, 107, 107, 0.8);
+  font-size: 12px;
+}
+
+.retryButton {
+  padding: 6px 16px;
+  background: rgba(255, 107, 107, 0.15);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 4px;
+  color: #ff6b6b;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.retryButton:hover {
+  background: rgba(255, 107, 107, 0.25);
+}
+
+/* === 歌曲列表 === */
+
+.trackList {
+  display: flex;
+  flex-direction: column;
+}
+
+/* === 歌曲项 === */
+
+.trackItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.trackItem:last-child {
+  border-bottom: none;
+}
+
+.trackItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.trackItem:focus-visible {
+  outline: 2px solid var(--led-text-color, #00ff00);
+  outline-offset: -2px;
+}
+
+/* === TOP3 特殊样式 === */
+
+.trackItemTop3 {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 200, 100, 0.03) 0%,
+    transparent 50%
+  );
+}
+
+.trackItemTop3:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 200, 100, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 50%
+  );
+}
+
+/* === TOP1 特殊样式 === */
+
+.trackItemTop1 {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 215, 0, 0.08) 0%,
+    rgba(255, 200, 100, 0.03) 40%,
+    transparent 100%
+  );
+  border-left: 3px solid #ffd700;
+  position: relative;
+}
+
+.trackItemTop1::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 215, 0, 0.05) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.trackItemTop1:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 215, 0, 0.12) 0%,
+    rgba(255, 200, 100, 0.06) 40%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+}
+
+/* === 活跃状态 === */
+
+.trackItemActive {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 0, 0.1) 0%,
+    rgba(0, 255, 0, 0.03) 40%,
+    transparent 100%
+  );
+}
+
+.trackItemActive.trackItemTop1 {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 215, 0, 0.15) 0%,
+    rgba(0, 255, 0, 0.08) 30%,
+    transparent 100%
+  );
+}
+
+/* === 排名标识 === */
+
+.rankBadge {
+  flex-shrink: 0;
+  width: 40px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  font-family: var(--led-font-family, 'Courier New', monospace);
+}
+
+.rankIndex {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.rankNumber {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* === TOP1 排名特殊样式 === */
+
+.rankBadgeTop1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+  box-shadow:
+    0 0 12px rgba(255, 215, 0, 0.4),
+    0 0 24px rgba(255, 215, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  width: 44px;
+  height: 22px;
+}
+
+.rankBadgeTop1 .rankNumber {
+  color: #1a1a1a;
+  font-size: 10px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* === TOP2 排名样式 === */
+
+.trackItem:nth-child(2) .rankBadge {
+  background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
+  box-shadow: 0 0 8px rgba(192, 192, 192, 0.3);
+}
+
+.trackItem:nth-child(2) .rankNumber {
+  color: #1a1a1a;
+}
+
+/* === TOP3 排名样式 === */
+
+.trackItem:nth-child(3) .rankBadge {
+  background: linear-gradient(135deg, #cd7f32 0%, #b8722d 100%);
+  box-shadow: 0 0 8px rgba(205, 127, 50, 0.3);
+}
+
+.trackItem:nth-child(3) .rankNumber {
+  color: #1a1a1a;
+}
+
+/* === 歌曲信息 === */
+
+.trackInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.trackName {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trackItemTop1 .trackName {
+  color: rgba(255, 230, 180, 0.95);
+  font-weight: 500;
+}
+
+.trackArtist {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trackItemTop1 .trackArtist {
+  color: rgba(255, 200, 150, 0.6);
+}
+
+/* === TOP1 皇冠装饰 === */
+
+.top1Decoration {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  pointer-events: none;
+}
+
+.top1Crown {
+  font-size: 14px;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5));
+  animation: crownGlow 2s ease-in-out infinite;
+}
+
+@keyframes crownGlow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* === 播放指示器 === */
+
+.playingIndicator {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playingIcon {
+  font-size: 10px;
+  color: var(--led-text-color, #00ff00);
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* === 底部刷新按钮 === */
+
+.footer {
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.refreshButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.refreshButton:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.refreshButton svg {
+  opacity: 0.7;
+}
+
+.refreshButton:hover svg {
+  opacity: 1;
+}
+
+/* === 响应式 === */
+
+@media (max-width: 480px) {
+  .header {
+    padding: 10px 12px;
+  }
+
+  .headerTitle {
+    font-size: 12px;
+  }
+
+  .trackItem {
+    padding: 6px 10px;
+    gap: 8px;
+  }
+
+  .rankBadge {
+    width: 36px;
+    height: 18px;
+  }
+
+  .rankBadgeTop1 {
+    width: 40px;
+    height: 20px;
+  }
+
+  .rankNumber {
+    font-size: 8px;
+  }
+
+  .trackName {
+    font-size: 11px;
+  }
+
+  .trackArtist {
+    font-size: 9px;
+  }
+}
+
+/* === 减少动画 === */
+
+@media (prefers-reduced-motion: reduce) {
+  .loadingSpinner,
+  .top1Crown,
+  .playingIcon {
+    animation: none;
+  }
+}

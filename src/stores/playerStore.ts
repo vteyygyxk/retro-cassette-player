@@ -54,6 +54,7 @@ interface PlayerStore extends PlayerState {
   prevTrack: () => void;
   selectTrack: (index: number) => void;
   setCurrentTrack: (track: Track | null, index: number) => void;
+  playTrack: (track: Track) => void;
 
   // Playlist management actions
   setPlaylist: (tracks: Track[]) => void;
@@ -117,7 +118,7 @@ const initialState: PlayerState = {
   isChangingTape: false,
   showVolumeDisplay: false,
   isPlaylistExpanded: true,
-  isFavoritesExpanded: true,
+  isFavoritesExpanded: false,
   showMusicSearch: true,
 };
 
@@ -361,6 +362,39 @@ export const usePlayerStore = create<PlayerStore>()(
           currentTrackIndex: index,
           currentTime: 0,
         });
+      },
+
+      playTrack: (track) => {
+        const { playlist } = get();
+        const existingIndex = playlist.findIndex(t => t.id === track.id);
+
+        if (existingIndex >= 0) {
+          // 歌曲已存在，直接播放
+          set({
+            currentTrackIndex: existingIndex,
+            currentTrack: playlist[existingIndex],
+            currentTime: 0,
+            isChangingTape: true,
+            playState: 'playing',
+          });
+        } else {
+          // 添加歌曲并播放
+          const newPlaylist = [...playlist, track];
+          const newIndex = newPlaylist.length - 1;
+          set({
+            playlist: newPlaylist,
+            currentTrackIndex: newIndex,
+            currentTrack: track,
+            currentTime: 0,
+            isChangingTape: true,
+            playState: 'playing',
+          });
+        }
+
+        // Reset changing tape animation after a delay
+        setTimeout(() => {
+          set({ isChangingTape: false });
+        }, 500);
       },
 
       // ========================================

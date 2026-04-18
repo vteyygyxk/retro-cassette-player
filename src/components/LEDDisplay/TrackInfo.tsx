@@ -28,6 +28,7 @@ export interface TrackInfoProps {
  * - Shows track name with scrolling animation when playing
  * - Shows placeholder text when no track is loaded
  * - Smooth scrolling animation with CSS
+ * - Scrolls across the full width of the LED display
  *
  * @param props - Component props
  * @returns The TrackInfo component
@@ -51,7 +52,7 @@ export function TrackInfo({
     );
   }
 
-  // When playing, always show scrolling animation
+  // Always scroll when playing
   const shouldScroll = isPlaying;
 
   return (
@@ -62,7 +63,6 @@ export function TrackInfo({
     >
       <div
         className={`${styles.trackName} ${shouldScroll ? styles.scrolling : ''}`}
-        title={trackName}
       >
         {shouldScroll ? (
           <>

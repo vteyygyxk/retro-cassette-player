@@ -28,8 +28,8 @@ import { VolumeKnob } from '../VolumeKnob';
 import { PlaylistPanel } from '../PlaylistPanel';
 import { FavoritesPanel } from '../FavoritesPanel';
 import { SkinSelector } from '../SkinSelector';
-import { Speaker } from '../Speaker';
 import { MusicSearchPanel } from '../MusicSearchPanel';
+import { TodayHitsPanel } from '../TodayHitsPanel';
 import { useKeyboardShortcuts, VOLUME_STEP } from '../../hooks/useKeyboardShortcuts';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useLyrics } from '../../hooks/useLyrics';
@@ -124,6 +124,7 @@ export function TapePlayer() {
     nextTrack,
     prevTrack,
     selectTrack,
+    playTrack,
     setPlaylist,
     addToPlaylistBatch,
     toggleFavorite,
@@ -174,17 +175,8 @@ export function TapePlayer() {
   const favoriteTrackIds = favorites.map((track) => track.id);
 
   const handleFavoriteTrackSelect = useCallback((track: Track) => {
-    const existingIndex = playlist.findIndex((item) => item.id === track.id);
-
-    if (existingIndex >= 0) {
-      selectTrack(existingIndex);
-      return;
-    }
-
-    const nextPlaylist = [...playlist, track];
-    setPlaylist(nextPlaylist);
-    selectTrack(nextPlaylist.length - 1);
-  }, [playlist, selectTrack, setPlaylist]);
+    playTrack(track);
+  }, [playTrack]);
 
   // ========================================
   // Audio Service Callbacks
@@ -499,8 +491,13 @@ export function TapePlayer() {
 
           {/* Player components */}
           <div className={styles.playerContent}>
-            {/* Left speaker */}
-            <Speaker playState={playState} side="left" />
+            {/* Today Hits Panel - 今日主打歌 */}
+            <div className={styles.playerTodayHits}>
+              <TodayHitsPanel
+                onTrackSelect={playTrack}
+                currentTrackId={currentTrack?.id}
+              />
+            </div>
 
             {/* Left column: integrated player module */}
             <div className={styles.playerLeft}>
@@ -593,13 +590,6 @@ export function TapePlayer() {
 
             {/* Right column: playlist */}
             <div className={styles.playerRight}>
-              {/* Playlist info */}
-              {hasMultipleTracks && (
-                <div className={styles.playlistInfo}>
-                  <span>曲目 {currentTrackIndex + 1} / {playlist.length}</span>
-                </div>
-              )}
-
               {/* Playlist Panel */}
               <PlaylistPanel
                 playlist={playlist}

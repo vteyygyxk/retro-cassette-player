@@ -49,8 +49,19 @@ export function TrackListPanel({
   } | null>(null);
   const [showScrollHint, setShowScrollHint] = useState(false);
   const listRef = useRef<HTMLUListElement>(null);
+  const activeItemRef = useRef<HTMLLIElement>(null);
 
   const MAX_VISIBLE_TRACKS = 5;
+
+  // Auto scroll to active track
+  useEffect(() => {
+    if (activeTrackId && activeItemRef.current && listRef.current && isExpanded) {
+      activeItemRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }
+  }, [activeTrackId, isExpanded]);
 
   // Check if scroll hint should be shown
   useEffect(() => {
@@ -135,6 +146,7 @@ export function TrackListPanel({
                   return (
                     <li
                       key={track.id}
+                      ref={isActive ? activeItemRef : null}
                       className={`${styles.trackItem} ${isActive ? styles.trackItemActive : ''}`}
                       role="listitem"
                       aria-current={isActive ? 'true' : undefined}
@@ -247,13 +259,14 @@ export function TrackListPanel({
                     </li>
                   );
                 })}
+                {/* Scroll Hint - 覆盖在列表底部 */}
+                {showScrollHint && tracks.length > 0 && (
+                  <div className={styles.scrollHint} aria-hidden="true">
+                    <span className={styles.scrollHintIcon}>↓</span>
+                    <span className={styles.scrollHintText}>还有 {remainingCount} 首，滚动查看</span>
+                  </div>
+                )}
               </ul>
-            )}
-            {showScrollHint && tracks.length > 0 && (
-              <div className={styles.scrollHint} aria-hidden="true">
-                <span className={styles.scrollHintIcon}>↓</span>
-                <span className={styles.scrollHintText}>还有 {remainingCount} 首，滚动查看</span>
-              </div>
             )}
           </motion.div>
         )}

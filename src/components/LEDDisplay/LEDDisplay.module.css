@@ -68,6 +68,7 @@
   min-height: 24px;
   overflow: hidden;
   position: relative;
+  width: 100%;
 }
 
 .trackName {
@@ -75,27 +76,31 @@
   font-size: var(--font-size-md, 14px);
   text-shadow: var(--led-glow, 0 0 10px rgba(0, 255, 0, 0.5));
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
 }
 
 .trackName.scrolling {
-  animation: scrollText 8s linear infinite;
+  display: inline-flex;
+  width: 100%;
+  animation: scrollText 15s linear infinite;
 }
 
 @keyframes scrollText {
   0% {
-    transform: translateX(0);
+    transform: translateX(100%);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-100%);
   }
 }
 
 .trackNameScroll {
   display: inline-block;
-  padding-right: var(--spacing-xl, 32px);
+  padding-right: 50%;
+  flex-shrink: 0;
+}
+
+.trackNameDisplay {
+  display: inline-block;
 }
 
 .noTrack {
