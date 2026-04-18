@@ -30,6 +30,7 @@ import { FavoritesPanel } from '../FavoritesPanel';
 import { SkinSelector } from '../SkinSelector';
 import { MusicSearchPanel } from '../MusicSearchPanel';
 import { TodayHitsPanel } from '../TodayHitsPanel';
+import { LyricsPanel } from '../LyricsPanel';
 import { useKeyboardShortcuts, VOLUME_STEP } from '../../hooks/useKeyboardShortcuts';
 import { useResponsive } from '../../hooks/useResponsive';
 import { useLyrics } from '../../hooks/useLyrics';
@@ -453,12 +454,6 @@ export function TapePlayer() {
         className={`${styles.tapePlayer} ${isMobile ? styles.mobile : ''}`}
         data-skin={currentSkinId}
       >
-        {/* Header */}
-        <header className={styles.header}>
-          <h1 className={styles.title}>复古磁带播放器</h1>
-          <p className={styles.subtitle}>Retro Cassette Player</p>
-        </header>
-
         {/* Main content area */}
         <main
           className={`${styles.main} ${isDragging ? styles.dragging : ''}`}
@@ -512,12 +507,6 @@ export function TapePlayer() {
                 volume={volume}
                 isSeeking={isSeeking}
                 seekDirection={seekDirection}
-                lyricsLines={lyricsLines}
-                currentLyricIndex={currentLyricIndex}
-                isLyricsSearching={isLyricsSearching}
-                lyricsAutoSearchFailed={lyricsAutoSearchFailed}
-                onLyricsSearch={searchLyricsOnline}
-                onLyricsLoadLocal={handleLyricsLoadLocal}
                 frequencyBands={frequencyBands}
               />
 
@@ -625,6 +614,18 @@ export function TapePlayer() {
             </div>
 
           </div>
+
+          {/* Lyrics Panel - Full-width lyrics display below player */}
+          <LyricsPanel
+            lines={lyricsLines}
+            currentLineIndex={currentLyricIndex}
+            isSearching={isLyricsSearching}
+            autoSearchFailed={lyricsAutoSearchFailed}
+            onSearch={searchLyricsOnline}
+            onLoadLocal={handleLyricsLoadLocal}
+            trackName={currentTrack?.name}
+            artist={currentTrack?.artist}
+          />
         </main>
       </div>
     </TapePlayerErrorBoundary>

@@ -49,7 +49,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-md, 16px);
+  gap: var(--spacing-lg, 24px);
   width: 100%;
   padding: var(--spacing-lg, 24px);
   border-radius: 16px;
@@ -154,6 +154,7 @@
   flex: 0 0 260px;
   min-width: 240px;
   max-width: 300px;
+  display: flex;
 }
 
 .tapePlayer.mobile .playerTodayHits {
@@ -166,12 +167,12 @@
 /* === Left Column: Integrated Player Module === */
 
 .playerLeft {
-  flex: 0 0 400px;
+  flex: 0 0 525px;
   display: flex;
   flex-direction: column;
   gap: 0;
-  min-width: 360px;
-  max-width: 440px;
+  min-width: 440px;
+  max-width: 540px;
   background: linear-gradient(
     180deg,
     rgba(30, 30, 30, 0.95) 0%,

@@ -144,6 +144,7 @@
   background: inherit;
   transition: transform 0.18s ease;
   touch-action: pan-y;
+  overflow: hidden;
 }
 
 .trackButton {
@@ -151,6 +152,7 @@
   align-items: center;
   gap: var(--spacing-sm, 8px);
   flex: 1;
+  min-width: 0;
   padding: var(--spacing-sm, 8px) var(--spacing-md, 16px);
   background: none;
   border: none;
@@ -232,6 +234,7 @@
 
 .actionButton {
   flex-shrink: 0;
+  flex-grow: 0;
   align-self: center;
   margin-right: var(--spacing-sm, 8px);
   width: 32px;
