@@ -1,0 +1,325 @@
+/**
+ * DateTimeWeather Component Styles
+ * Retro LED style display for date, time and weather
+ */
+
+/* === Main Container === */
+
+.container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+/* === LED Panel Background === */
+
+.dateTimeSection,
+.weatherSection {
+  background: linear-gradient(
+    145deg,
+    rgba(15, 25, 20, 0.95) 0%,
+    rgba(10, 18, 15, 0.98) 100%
+  );
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 1px solid rgba(0, 255, 0, 0.15);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(0, 255, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Scanline effect */
+.dateTimeSection::before,
+.weatherSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* === Date & Time Section === */
+
+.dateTimeSection {
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 72px;
+}
+
+.date {
+  font-size: 11px;
+  color: rgba(0, 255, 0, 0.6);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  font-family: var(--font-family-base, sans-serif);
+}
+
+.time {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--led-text-color, #00ff00);
+  font-family: var(--led-font-family, 'Courier New', monospace);
+  text-shadow:
+    0 0 10px rgba(0, 255, 0, 0.6),
+    0 0 20px rgba(0, 255, 0, 0.4),
+    0 0 30px rgba(0, 255, 0, 0.2);
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+/* Colon blink animation */
+.time::after {
+  content: '';
+  animation: none;
+}
+
+/* === Weather Section === */
+
+.weatherSection {
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 72px;
+}
+
+.weatherLoading,
+.weatherError {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(0, 255, 0, 0.5);
+}
+
+.loadingIcon {
+  display: inline-block;
+  animation: spin 1.5s linear infinite;
+  font-size: 14px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.retryBtn {
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  color: var(--led-text-color, #00ff00);
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.retryBtn:hover {
+  background: rgba(0, 255, 0, 0.2);
+  border-color: rgba(0, 255, 0, 0.5);
+  transform: rotate(180deg);
+}
+
+/* === Weather Content === */
+
+.weatherContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weatherMain {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.weatherIcon {
+  font-size: 24px;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
+}
+
+.temperature {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--led-text-color, #00ff00);
+  font-family: var(--led-font-family, 'Courier New', monospace);
+  text-shadow:
+    0 0 8px rgba(0, 255, 0, 0.5),
+    0 0 16px rgba(0, 255, 0, 0.3);
+}
+
+.weatherDetails {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.location {
+  font-size: 11px;
+  color: rgba(0, 255, 0, 0.9);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.description {
+  font-size: 11px;
+  color: rgba(0, 255, 0, 0.6);
+  letter-spacing: 0.5px;
+}
+
+.humidity {
+  font-size: 10px;
+  color: rgba(100, 200, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* === Responsive === */
+
+@media (max-width: 900px) {
+  .container {
+    top: 12px;
+    left: 12px;
+    gap: 12px;
+  }
+
+  .dateTimeSection,
+  .weatherSection {
+    padding: 10px 14px;
+    min-height: 68px;
+  }
+
+  .time {
+    font-size: 22px;
+  }
+
+  .temperature {
+    font-size: 18px;
+  }
+
+  .weatherIcon {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    position: fixed;
+    top: auto;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .dateTimeSection,
+  .weatherSection {
+    flex: 1;
+    max-width: 200px;
+    padding: 10px 14px;
+    min-height: 64px;
+  }
+
+  .date {
+    font-size: 10px;
+  }
+
+  .time {
+    font-size: 20px;
+  }
+
+  .weatherIcon {
+    font-size: 20px;
+  }
+
+  .temperature {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    gap: 8px;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+  }
+
+  .dateTimeSection,
+  .weatherSection {
+    padding: 8px 12px;
+    min-width: auto;
+    min-height: 58px;
+  }
+
+  .date {
+    font-size: 9px;
+  }
+
+  .time {
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  .weatherIcon {
+    font-size: 18px;
+  }
+
+  .temperature {
+    font-size: 16px;
+  }
+
+  .description {
+    font-size: 10px;
+  }
+
+  .location {
+    font-size: 10px;
+  }
+
+  .humidity {
+    font-size: 9px;
+  }
+}
+
+/* === Reduced Motion === */
+
+@media (prefers-reduced-motion: reduce) {
+  .loadingIcon {
+    animation: none;
+  }
+
+  .retryBtn:hover {
+    transform: none;
+  }
+}

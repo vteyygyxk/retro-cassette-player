@@ -17,6 +17,15 @@ export default defineConfig({
           'Cookie': 'os=pc',
         },
       },
+      // API proxy for 通义千问 (阿里云)
+      '/api/qwen': {
+        target: 'https://dashscope.aliyuncs.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/qwen/, ''),
+        headers: {
+          'Host': 'dashscope.aliyuncs.com',
+        },
+      },
     },
   },
   test: {

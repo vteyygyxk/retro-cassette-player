@@ -5,10 +5,18 @@
  */
 
 import { TapePlayer } from './components/TapePlayer';
+import { DateTimeWeather } from './components/DateTimeWeather';
+import { AIChat } from './components/AIChat';
 import './App.css';
 
 function App() {
-  return <TapePlayer />;
+  return (
+    <>
+      <DateTimeWeather />
+      <TapePlayer />
+      <AIChat />
+    </>
+  );
 }
 
 export default App;
