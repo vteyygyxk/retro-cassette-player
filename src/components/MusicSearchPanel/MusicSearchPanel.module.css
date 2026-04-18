@@ -26,9 +26,17 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.searchInput {
+.inputWrapper {
   flex: 1;
-  padding: 6px 10px;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 6px 28px 6px 10px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
@@ -50,42 +58,29 @@
   opacity: 0.5;
 }
 
-.searchButton {
-  padding: 6px 14px;
-  background: rgba(0, 255, 0, 0.15);
-  border: 1px solid rgba(0, 255, 0, 0.3);
-  border-radius: 4px;
-  color: var(--led-text-color, #00ff00);
-  font-size: 12px;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-  white-space: nowrap;
-}
-
-.searchButton:hover:not(:disabled) {
-  background: rgba(0, 255, 0, 0.25);
-}
-
-.searchButton:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.clearButton {
-  padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 12px;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-  white-space: nowrap;
-}
-
-.clearButton:hover {
+.clearInputButton {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
   background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+
+.clearInputButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* === Random Play Button === */

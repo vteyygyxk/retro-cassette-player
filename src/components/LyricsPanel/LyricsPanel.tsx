@@ -1,13 +1,6 @@
 /**
  * LyricsPanel Component - Full-width lyrics display panel
- * Displays synced lyrics in a desktop music player style (similar to Kugou Music)
- *
- * Features:
- * - Large, readable lyrics display
- * - Smooth scrolling to current line
- * - Current line highlighted and enlarged
- * - Past lines dimmed
- * - Empty state with search/load options
+ * 左右切换式歌词显示，类似酷狗音乐风格
  */
 
 import { useRef, useEffect } from 'react';
@@ -47,22 +40,25 @@ export function LyricsPanel({
   className,
 }: LyricsPanelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const activeLineRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to active line with smooth animation
+  // 只显示当前行和下一行（共2行）
+  const visibleLines = [];
+  const currentLine = currentLineIndex >= 0 && currentLineIndex < lines.length ? lines[currentLineIndex] : null;
+  const nextLine = currentLineIndex >= 0 && currentLineIndex < lines.length - 1 ? lines[currentLineIndex + 1] : null;
+
+  if (currentLine) {
+    visibleLines.push({ ...currentLine, index: currentLineIndex });
+  }
+  if (nextLine) {
+    visibleLines.push({ ...nextLine, index: currentLineIndex + 1 });
+  }
+
+  // 动画效果 - 当前歌词切换时添加动画
   useEffect(() => {
-    if (activeLineRef.current && containerRef.current) {
-      const container = containerRef.current;
-      const active = activeLineRef.current;
-      const containerHeight = container.clientHeight;
-      const activeTop = active.offsetTop;
-      const activeHeight = active.clientHeight;
-
-      // Scroll to center the active line
-      container.scrollTo({
-        top: activeTop - containerHeight / 2 + activeHeight / 2,
-        behavior: 'smooth',
-      });
+    if (containerRef.current) {
+      containerRef.current.classList.remove(styles.animate);
+      void containerRef.current.offsetWidth; // 触发重排
+      containerRef.current.classList.add(styles.animate);
     }
   }, [currentLineIndex]);
 
@@ -119,14 +115,6 @@ export function LyricsPanel({
     );
   }
 
-  // Calculate visible window - show up to 7 lines
-  const windowSize = 7;
-  const halfWindow = Math.floor(windowSize / 2);
-  const startIdx = Math.max(0, currentLineIndex - halfWindow);
-  const endIdx = Math.min(lines.length, startIdx + windowSize);
-  const adjustedStart = Math.max(0, endIdx - windowSize);
-  const visibleLines = lines.slice(adjustedStart, adjustedStart + windowSize);
-
   return (
     <div className={`${styles.lyricsPanel} ${className ?? ''}`}>
       <div className={styles.header}>
@@ -138,32 +126,17 @@ export function LyricsPanel({
       </div>
       <div className={styles.lyricsContainer} ref={containerRef}>
         <div className={styles.lyricsContent}>
-          {/* Top padding for first lines */}
-          {adjustedStart === 0 && <div className={styles.topPadding} />}
-
           {visibleLines.map((line, i) => {
-            const globalIdx = adjustedStart + i;
-            const isActive = globalIdx === currentLineIndex;
-            const isPast = globalIdx < currentLineIndex;
-            const distance = Math.abs(globalIdx - currentLineIndex);
-
+            const isActive = i === 0;
             return (
               <div
-                key={globalIdx}
-                ref={isActive ? activeLineRef : undefined}
-                className={`${styles.lyricLine} ${isActive ? styles.active : ''} ${isPast ? styles.past : ''}`}
-                style={{
-                  opacity: isActive ? 1 : Math.max(0.2, 1 - distance * 0.15),
-                  transform: isActive ? 'scale(1.1)' : 'scale(1)',
-                }}
+                key={`${line.index}-${currentLineIndex}`}
+                className={`${styles.lyricLine} ${isActive ? styles.active : ''} ${i === 0 ? styles.leftLine : styles.rightLine}`}
               >
                 {line.text || '···'}
               </div>
             );
           })}
-
-          {/* Bottom padding for last lines */}
-          {endIdx >= lines.length && <div className={styles.bottomPadding} />}
         </div>
       </div>
     </div>

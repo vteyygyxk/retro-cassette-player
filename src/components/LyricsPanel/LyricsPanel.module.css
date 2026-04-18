@@ -1,6 +1,6 @@
 /**
  * LyricsPanel Component Styles
- * Full-width lyrics display panel similar to Kugou Music style
+ * 左右切换式歌词显示面板
  */
 
 /* === Main Panel Container === */
@@ -18,8 +18,8 @@
     0 4px 24px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  min-height: 120px;
-  max-height: 160px;
+  min-height: 100px;
+  max-height: 140px;
   display: flex;
   flex-direction: column;
 }
@@ -37,13 +37,13 @@
 
 .headerIcon {
   color: var(--led-text-color, #00ff00);
-  font-size: 16px;
+  font-size: 14px;
   opacity: 0.8;
 }
 
 .headerText {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -60,84 +60,66 @@
 
 .lyricsContainer {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black 10%,
-    black 90%,
-    transparent 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black 10%,
-    black 90%,
-    transparent 100%
-  );
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 255, 0, 0.3) transparent;
+  padding: 12px 16px;
 }
-
-.lyricsContainer::-webkit-scrollbar {
-  width: 4px;
-}
-
-.lyricsContainer::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.lyricsContainer::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 0, 0.3);
-  border-radius: 2px;
-}
-
-.lyricsContainer::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 255, 0, 0.5);
-}
-
-/* === Lyrics Content === */
 
 .lyricsContent {
-  padding: 12px;
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
 }
 
-.topPadding,
-.bottomPadding {
-  height: 30px;
+/* 切换动画 */
+.lyricsContainer.animate .lyricsContent {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* === Individual Lyric Line === */
 
 .lyricLine {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 14px;
-  line-height: 1.8;
-  padding: 2px 12px;
+  flex: 1;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  line-height: 1.6;
   transition: all 0.3s ease;
-  cursor: default;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  max-width: 50%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.lyricLine:hover {
-  color: rgba(255, 255, 255, 0.8);
+.lyricLine.leftLine {
+  text-align: left;
+}
+
+.lyricLine.rightLine {
+  text-align: right;
 }
 
 .lyricLine.active {
   color: var(--led-text-color, #00ff00);
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   text-shadow:
     0 0 10px rgba(0, 255, 0, 0.5),
-    0 0 20px rgba(0, 255, 0, 0.3),
-    0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.lyricLine.past {
-  color: rgba(255, 255, 255, 0.35);
+    0 0 20px rgba(0, 255, 0, 0.3);
 }
 
 /* === Empty State === */
@@ -146,20 +128,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 120px;
+  min-height: 100px;
 }
 
 .emptyContent {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   padding: 16px;
   text-align: center;
 }
 
 .emptyIcon {
-  font-size: 32px;
+  font-size: 28px;
   color: rgba(255, 255, 255, 0.15);
   animation: pulse 2s ease-in-out infinite;
 }
@@ -168,7 +150,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .musicNote {
@@ -202,22 +184,22 @@
 
 .emptyText {
   color: rgba(255, 255, 255, 0.4);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .emptyActions {
   display: flex;
-  gap: 12px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 4px;
 }
 
 .actionButton {
-  padding: 8px 20px;
+  padding: 6px 16px;
   background: rgba(0, 255, 0, 0.1);
   color: var(--led-text-color, #00ff00);
   border: 1px solid rgba(0, 255, 0, 0.3);
-  border-radius: 20px;
-  font-size: 13px;
+  border-radius: 16px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
@@ -251,7 +233,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
   }
 }
 
@@ -268,79 +250,61 @@
 
 @media (max-width: 768px) {
   .lyricsPanel {
-    min-height: 100px;
-    max-height: 130px;
+    min-height: 90px;
+    max-height: 120px;
     border-radius: 10px;
-  }
-
-  .header {
-    padding: 10px 16px;
-  }
-
-  .headerText {
-    font-size: 13px;
-  }
-
-  .lyricsContent {
-    padding: 10px;
-  }
-
-  .lyricLine {
-    font-size: 13px;
-    line-height: 1.7;
-    padding: 2px 10px;
-  }
-
-  .lyricLine.active {
-    font-size: 15px;
-  }
-
-  .topPadding,
-  .bottomPadding {
-    height: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .lyricsPanel {
-    min-height: 80px;
-    max-height: 110px;
-    border-radius: 8px;
   }
 
   .header {
     padding: 6px 12px;
   }
 
-  .headerIcon {
-    font-size: 14px;
-  }
-
   .headerText {
     font-size: 12px;
   }
 
-  .lyricsContent {
-    padding: 8px;
-  }
-
   .lyricLine {
-    font-size: 12px;
-    line-height: 1.6;
-    padding: 1px 8px;
-  }
-
-  .lyricLine.active {
     font-size: 14px;
   }
 
-  .topPadding,
-  .bottomPadding {
-    height: 15px;
+  .lyricLine.active {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lyricsPanel {
+    min-height: 80px;
+    max-height: 100px;
+    border-radius: 8px;
+  }
+
+  .header {
+    padding: 6px 10px;
+  }
+
+  .headerIcon {
+    font-size: 12px;
+  }
+
+  .headerText {
+    font-size: 11px;
+  }
+
+  .lyricsContainer {
+    padding: 8px 12px;
+  }
+
+  .lyricLine {
+    font-size: 13px;
+  }
+
+  .lyricLine.active {
+    font-size: 15px;
   }
 
   .emptyIcon {
-    font-size: 28px;
+    font-size: 24px;
   }
 
   .emptyText {
@@ -348,7 +312,7 @@
   }
 
   .actionButton {
-    padding: 5px 14px;
+    padding: 5px 12px;
     font-size: 11px;
   }
 }
@@ -356,8 +320,8 @@
 /* === Reduced Motion === */
 
 @media (prefers-reduced-motion: reduce) {
-  .lyricLine {
-    transition: color 0.3s ease;
+  .lyricsContainer.animate .lyricsContent {
+    animation: none;
   }
 
   .emptyIcon,

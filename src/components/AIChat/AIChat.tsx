@@ -12,10 +12,17 @@ interface Message {
   content: string;
 }
 
+interface AIChatProps {
+  /** 当前播放的歌曲名称 */
+  currentTrackName?: string;
+  /** 当前播放的歌手 */
+  currentArtist?: string;
+}
+
 // 通义千问 API 配置
 const QWEN_API_URL = '/api/qwen/api/v1/services/aigc/text-generation/generation';
 
-export function AIChat() {
+export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -64,6 +71,21 @@ export function AIChat() {
     try {
       // 构建对话历史
       const chatHistory = [];
+
+      // 添加系统消息，包含当前歌曲信息
+      let systemContent = '你是一个友好的AI音乐助手，专门帮助用户解答关于音乐、播放器使用等问题。回答要简洁有趣，偶尔可以用一些音乐相关的表情符号。';
+      if (currentTrackName) {
+        systemContent += `\n\n当前用户正在播放的歌曲：${currentTrackName}${currentArtist ? ` - ${currentArtist}` : ''}。如果用户问起，你可以聊聊这首歌。`;
+      } else {
+        systemContent += '\n\n当前用户没有播放任何歌曲。';
+      }
+
+      chatHistory.push({
+        role: 'system',
+        content: systemContent,
+      });
+
+      // 添加历史消息
       for (const msg of messages) {
         chatHistory.push({
           role: msg.role,
@@ -211,7 +233,13 @@ export function AIChat() {
                 <div className={styles.welcomeText}>
                   你好！我是你的AI音乐助手 🎧
                   <br />
-                  有什么可以帮你的吗？
+                  {currentTrackName ? (
+                    <>
+                      当前正在播放：{currentTrackName}{currentArtist ? ` - ${currentArtist}` : ''}
+                    </>
+                  ) : (
+                    '有什么可以帮你的吗？'
+                  )}
                 </div>
                 {!apiKey && (
                   <div className={styles.welcomeHint}>

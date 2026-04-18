@@ -94,22 +94,30 @@ export function MusicSearchPanel({ className }: MusicSearchPanelProps) {
     <div className={`${styles.searchPanel} ${className ?? ''}`}>
       {/* Search Bar */}
       <form className={styles.searchBar} onSubmit={handleSearch}>
-        <input
-          type="text"
-          className={styles.searchInput}
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="搜索歌曲、歌手..."
-          disabled={isSearching}
-        />
-        <button
-          type="submit"
-          className={styles.searchButton}
-          disabled={isSearching || !keyword.trim()}
-        >
-          {isSearching ? '...' : '搜索'}
-        </button>
+        <div className={styles.inputWrapper}>
+          <input
+            type="text"
+            className={styles.searchInput}
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="搜索歌曲、歌手... (回车搜索)"
+            disabled={isSearching}
+          />
+          {keyword && (
+            <button
+              type="button"
+              className={styles.clearInputButton}
+              onClick={() => {
+                setKeyword('');
+                clearResults();
+              }}
+              title="清除"
+            >
+              ×
+            </button>
+          )}
+        </div>
         <button
           type="button"
           className={styles.randomPlayButton}
@@ -130,15 +138,6 @@ export function MusicSearchPanel({ className }: MusicSearchPanelProps) {
           </span>
           <span className={styles.randomPlayText}>随心听</span>
         </button>
-        {results.length > 0 && (
-          <button
-            type="button"
-            className={styles.clearButton}
-            onClick={clearResults}
-          >
-            清除
-          </button>
-        )}
       </form>
 
       {/* Error Message */}

@@ -7,14 +7,21 @@
 import { TapePlayer } from './components/TapePlayer';
 import { DateTimeWeather } from './components/DateTimeWeather';
 import { AIChat } from './components/AIChat';
+import { usePlayerStore } from './stores/playerStore';
 import './App.css';
 
 function App() {
+  // 获取当前播放歌曲信息
+  const currentTrack = usePlayerStore((state) => state.currentTrack);
+
   return (
     <>
       <DateTimeWeather />
       <TapePlayer />
-      <AIChat />
+      <AIChat
+        currentTrackName={currentTrack?.name}
+        currentArtist={currentTrack?.artist}
+      />
     </>
   );
 }
