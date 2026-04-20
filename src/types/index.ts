@@ -19,6 +19,12 @@ export interface Track {
   albumCover?: string;
   audioUrl: string;
   file?: File;
+  /** 原始来源ID，如网易云歌曲ID，用于重新获取URL */
+  sourceId?: number;
+  /** 来源类型 */
+  sourceType?: 'netease' | 'local';
+  /** URL创建时间，用于判断是否过期 */
+  urlCreatedAt?: number;
 }
 
 // ============================================================================

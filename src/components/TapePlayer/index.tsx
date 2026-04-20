@@ -20,6 +20,7 @@ import type { ReactNode, ErrorInfo } from 'react';
 import { usePlayerStore } from '../../stores/playerStore';
 import { getAudioService, resetAudioService } from '../../services/audioService';
 import { getFileService } from '../../services/fileService';
+import { getMusicSearchService } from '../../services/musicSearchService';
 import { getSkinById, DEFAULT_SKINS, getAllSkins, CUSTOM_SKIN_ID } from '../../data/skins';
 import { TapeDeck } from '../TapeDeck';
 import { ControlPanel } from '../ControlPanel';
@@ -36,6 +37,9 @@ import { useResponsive } from '../../hooks/useResponsive';
 import { useLyrics } from '../../hooks/useLyrics';
 import type { Track } from '../../types';
 import styles from './TapePlayer.module.css';
+
+// URL过期时间（网易云外链通常几小时过期，设为1小时）
+const URL_EXPIRE_TIME = 60 * 60 * 1000;
 
 // ============================================================================
 // Error Boundary
@@ -217,8 +221,46 @@ export function TapePlayer() {
         try {
           setError(null);
 
-          console.log('[DEBUG] Loading audio URL:', currentTrack.audioUrl);
-          await audioService.current.loadFromUrl(currentTrack.audioUrl);
+          let audioUrl = currentTrack.audioUrl;
+
+          // 检查是否是在线歌曲且URL可能过期
+          const isUrlExpired = currentTrack.sourceType === 'netease' &&
+            currentTrack.sourceId &&
+            currentTrack.urlCreatedAt &&
+            (Date.now() - currentTrack.urlCreatedAt > URL_EXPIRE_TIME);
+
+          // 如果URL过期或加载失败，尝试重新获取
+          if (isUrlExpired || !currentTrack.urlCreatedAt) {
+            if (currentTrack.sourceId && currentTrack.sourceType === 'netease') {
+              console.log('[DEBUG] URL may be expired, refreshing for song:', currentTrack.sourceId);
+              try {
+                const musicService = getMusicSearchService();
+                const urlResult = await musicService.getSongUrl(currentTrack.sourceId);
+                if (urlResult?.url) {
+                  audioUrl = musicService.getProxiedAudioUrl(urlResult.url);
+                  console.log('[DEBUG] Got new URL:', audioUrl?.substring(0, 100));
+
+                  // 更新store中的track
+                  const store = usePlayerStore.getState();
+                  const updatedTrack: Track = {
+                    ...currentTrack,
+                    audioUrl,
+                    urlCreatedAt: Date.now(),
+                  };
+
+                  // 更新playlist和favorites中的track
+                  if (store.playlist.some(t => t.id === currentTrack.id)) {
+                    store.setPlaylist(store.playlist.map(t => t.id === currentTrack.id ? updatedTrack : t));
+                  }
+                }
+              } catch (refreshErr) {
+                console.error('[DEBUG] Failed to refresh URL:', refreshErr);
+              }
+            }
+          }
+
+          console.log('[DEBUG] Loading audio URL:', audioUrl);
+          await audioService.current.loadFromUrl(audioUrl);
 
           if (cancelled) return;
 
@@ -238,7 +280,33 @@ export function TapePlayer() {
           if (cancelled) return;
           console.error('[DEBUG] Failed to load track:', err);
           console.error('[DEBUG] Track info:', currentTrack);
-          setError(`曲目加载失败: ${err instanceof Error ? err.message : '未知错误'}`);
+
+          // 如果是网易云歌曲，尝试重新获取URL
+          if (currentTrack.sourceId && currentTrack.sourceType === 'netease') {
+            console.log('[DEBUG] Attempting to refresh URL for song:', currentTrack.sourceId);
+            try {
+              const musicService = getMusicSearchService();
+              const urlResult = await musicService.getSongUrl(currentTrack.sourceId);
+              if (urlResult?.url) {
+                const newUrl = musicService.getProxiedAudioUrl(urlResult.url);
+                console.log('[DEBUG] Retry with new URL:', newUrl?.substring(0, 100));
+                await audioService.current.loadFromUrl(newUrl);
+
+                if (cancelled) return;
+
+                setDuration(audioService.current.getDuration());
+                const currentPlayState = usePlayerStore.getState().playState;
+                if (currentPlayState === 'playing') {
+                  audioService.current.play().catch(console.error);
+                }
+                return;
+              }
+            } catch (retryErr) {
+              console.error('[DEBUG] Retry failed:', retryErr);
+            }
+          }
+
+          setError(`曲目加载失败: 不支持的格式或CORS错误`);
         }
       }
     };
@@ -619,6 +687,7 @@ export function TapePlayer() {
           <LyricsPanel
             lines={lyricsLines}
             currentLineIndex={currentLyricIndex}
+            currentTime={currentTime}
             isSearching={isLyricsSearching}
             autoSearchFailed={lyricsAutoSearchFailed}
             onSearch={searchLyricsOnline}

@@ -242,6 +242,9 @@ export class MusicSearchService {
       duration: result.duration / 1000,
       audioUrl: audioUrl,
       albumCover: detail?.albumCover,
+      sourceId: result.id,
+      sourceType: 'netease',
+      urlCreatedAt: Date.now(),
     };
   }
 

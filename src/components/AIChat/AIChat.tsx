@@ -1,9 +1,12 @@
 /**
  * AIChat Component - Floating AI assistant chat widget
- * 支持阿里云通义千问 API
+ * 支持阿里云通义千问 API，可以解析用户意图并播放歌曲
+ * 支持语音输入（讯飞语音识别，国内可用）
  */
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useSpeechRecognition } from '../../hooks/useSpeechRecognition';
+import type { XunfeiConfig } from '../../hooks/useSpeechRecognition';
 import styles from './AIChat.module.css';
 
 interface Message {
@@ -17,12 +20,96 @@ interface AIChatProps {
   currentTrackName?: string;
   /** 当前播放的歌手 */
   currentArtist?: string;
+  /** 播放歌曲的回调 */
+  onPlaySong?: (songName: string, artist?: string) => Promise<boolean>;
+  /** 随机播放的回调 */
+  onRandomPlay?: () => Promise<boolean>;
 }
 
 // 通义千问 API 配置
 const QWEN_API_URL = '/api/qwen/api/v1/services/aigc/text-generation/generation';
 
-export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
+// 系统提示词
+const SYSTEM_PROMPT = `你是一个友好的AI音乐助手，专门帮助用户发现和播放音乐。
+
+## 核心能力
+1. **播放歌曲**: 当用户说想听某首歌时，你可以帮他们播放
+2. **推荐音乐**: 根据用户喜好推荐歌曲
+3. **音乐知识**: 解答关于音乐、歌手、歌曲的问题
+
+## 播放歌曲的规则
+当用户想听歌时，你需要返回特殊格式的JSON指令：
+
+### 播放指定歌曲
+\`\`\`json
+{"action": "play", "song": "歌曲名", "artist": "歌手名"}
+\`\`\`
+
+### 随机播放
+\`\`\`json
+{"action": "random"}
+\`\`\`
+
+## 示例对话
+用户: "我想听周杰伦的稻香"
+助手: 好的，为你播放周杰伦的《稻香》🎶
+\`\`\`json
+{"action": "play", "song": "稻香", "artist": "周杰伦"}
+\`\`\`
+
+用户: "放首歌"
+助手: 好的，为你随机播放一首歌 🎵
+\`\`\`json
+{"action": "random"}
+\`\`\`
+
+用户: "来首欢快的歌"
+助手: 好的，为你播放一首欢快的歌！
+\`\`\`json
+{"action": "play", "song": "小幸运", "artist": "田馥甄"}
+\`\`\`
+
+## 重要规则
+1. JSON指令必须放在单独的代码块中，格式为 \`\`\`json ... \`\`\`
+2. 每次只能返回一个JSON指令
+3. 如果用户没有明确指定歌曲，可以根据情境推荐并播放
+4. 回答要简洁有趣，偶尔可以用音乐相关的表情符号
+5. 如果用户问的是音乐知识问题而非播放请求，正常回答即可，不需要返回JSON`;
+
+// 解析AI响应中的JSON指令
+function parseActionFromResponse(content: string): { action: string; song?: string; artist?: string } | null {
+  const jsonMatch = content.match(/```json\s*(\{[\s\S]*?\})\s*```/);
+  if (jsonMatch) {
+    try {
+      return JSON.parse(jsonMatch[1]);
+    } catch {
+      return null;
+    }
+  }
+
+  const directJsonMatch = content.match(/\{[\s\S]*?"action"[\s\S]*?\}/);
+  if (directJsonMatch) {
+    try {
+      return JSON.parse(directJsonMatch[0]);
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+}
+
+// 清理响应内容中的JSON代码块
+function cleanResponseContent(content: string): string {
+  return content.replace(/```json\s*\{[\s\S]*?\}\s*```/g, '').trim();
+}
+
+export function AIChat({
+  currentTrackName,
+  currentArtist,
+  onPlaySong,
+  onRandomPlay,
+}: AIChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -31,7 +118,47 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
     return localStorage.getItem('qwen_api_key') || '';
   });
   const [showSettings, setShowSettings] = useState(false);
+  const [activeSettingsTab, setActiveSettingsTab] = useState<'qwen' | 'xunfei'>('qwen');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 语音识别回调
+  const handleSpeechResult = useCallback((transcript: string) => {
+    console.log('[AIChat] handleSpeechResult called with:', transcript);
+    if (transcript.trim() && apiKey) {
+      setInput(transcript);
+      setTimeout(() => {
+        sendMessageWithText(transcript);
+      }, 300);
+    } else {
+      console.log('[AIChat] transcript empty or no apiKey, transcript:', transcript, 'apiKey:', !!apiKey);
+    }
+  }, [apiKey]);
+
+  // 语音识别Hook
+  const {
+    state: speechState,
+    isConfigured: isSpeechConfigured,
+    error: speechError,
+    xunfeiConfig,
+    saveConfig: saveXunfeiConfig,
+    toggleListening,
+  } = useSpeechRecognition({
+    onResult: handleSpeechResult,
+  });
+
+  // 讯飞配置表单状态
+  const [xunfeiForm, setXunfeiForm] = useState<XunfeiConfig>({
+    appId: '',
+    apiKey: '',
+    apiSecret: '',
+  });
+
+  // 初始化讯飞配置表单
+  useEffect(() => {
+    if (xunfeiConfig) {
+      setXunfeiForm(xunfeiConfig);
+    }
+  }, [xunfeiConfig]);
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -42,7 +169,13 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
   const saveApiKey = (key: string) => {
     setApiKey(key);
     localStorage.setItem('qwen_api_key', key);
-    setShowSettings(false);
+  };
+
+  // Save Xunfei config
+  const handleSaveXunfeiConfig = () => {
+    if (xunfeiForm.appId && xunfeiForm.apiKey && xunfeiForm.apiSecret) {
+      saveXunfeiConfig(xunfeiForm);
+    }
   };
 
   // Clear chat history
@@ -50,9 +183,21 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
     setMessages([]);
   };
 
-  // Send message to Qwen API
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+  // Execute play action
+  const executeAction = useCallback(async (action: { action: string; song?: string; artist?: string }) => {
+    if (action.action === 'play' && action.song && onPlaySong) {
+      const success = await onPlaySong(action.song, action.artist);
+      return success ? `已为你播放《${action.song}》${action.artist ? ` - ${action.artist}` : ''} 🎵` : `抱歉，没有找到《${action.song}》，请换个关键词试试`;
+    } else if (action.action === 'random' && onRandomPlay) {
+      const success = await onRandomPlay();
+      return success ? '正在为你随机播放一首歌 🎶' : '随机播放失败，请稍后重试';
+    }
+    return null;
+  }, [onPlaySong, onRandomPlay]);
+
+  // Send message with specific text
+  const sendMessageWithText = async (text: string) => {
+    if (!text.trim() || isLoading) return;
     if (!apiKey) {
       setShowSettings(true);
       return;
@@ -61,7 +206,7 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: input.trim(),
+      content: text.trim(),
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -69,33 +214,22 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
     setIsLoading(true);
 
     try {
-      // 构建对话历史
       const chatHistory = [];
 
-      // 添加系统消息，包含当前歌曲信息
-      let systemContent = '你是一个友好的AI音乐助手，专门帮助用户解答关于音乐、播放器使用等问题。回答要简洁有趣，偶尔可以用一些音乐相关的表情符号。';
+      let systemContent = SYSTEM_PROMPT;
       if (currentTrackName) {
-        systemContent += `\n\n当前用户正在播放的歌曲：${currentTrackName}${currentArtist ? ` - ${currentArtist}` : ''}。如果用户问起，你可以聊聊这首歌。`;
+        systemContent += `\n\n## 当前播放状态\n用户正在播放：${currentTrackName}${currentArtist ? ` - ${currentArtist}` : ''}`;
       } else {
-        systemContent += '\n\n当前用户没有播放任何歌曲。';
+        systemContent += '\n\n## 当前播放状态\n用户当前没有播放任何歌曲';
       }
 
-      chatHistory.push({
-        role: 'system',
-        content: systemContent,
-      });
+      chatHistory.push({ role: 'system', content: systemContent });
 
-      // 添加历史消息
-      for (const msg of messages) {
-        chatHistory.push({
-          role: msg.role,
-          content: msg.content,
-        });
+      const recentMessages = messages.slice(-10);
+      for (const msg of recentMessages) {
+        chatHistory.push({ role: msg.role, content: msg.content });
       }
-      chatHistory.push({
-        role: 'user',
-        content: userMessage.content,
-      });
+      chatHistory.push({ role: 'user', content: userMessage.content });
 
       const response = await fetch(QWEN_API_URL, {
         method: 'POST',
@@ -105,13 +239,8 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
         },
         body: JSON.stringify({
           model: 'qwen-turbo',
-          input: {
-            messages: chatHistory,
-          },
-          parameters: {
-            max_tokens: 1024,
-            temperature: 0.7,
-          },
+          input: { messages: chatHistory },
+          parameters: { max_tokens: 1024, temperature: 0.7 },
         }),
       });
 
@@ -121,27 +250,41 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
         throw new Error(data.message || data.error?.message || `请求失败 (${response.status})`);
       }
 
-      const assistantMessage: Message = {
+      const rawContent = data.output?.text || '抱歉，我没有理解您的问题。';
+      console.log('[AI] Raw response:', rawContent);
+      const action = parseActionFromResponse(rawContent);
+      let finalContent = cleanResponseContent(rawContent);
+      console.log('[AI] Final content:', finalContent);
+
+      if (action) {
+        const actionResult = await executeAction(action);
+        if (actionResult) {
+          finalContent = finalContent ? `${finalContent}\n\n${actionResult}` : actionResult;
+        }
+      }
+
+      setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.output?.text || '抱歉，我没有理解您的问题。',
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
+        content: finalContent || rawContent,
+      }]);
     } catch (error) {
       const errorText = error instanceof Error ? error.message : '未知错误';
-      const errorMessage: Message = {
+      setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: `❌ 错误: ${errorText}\n\n请检查:\n1. API Key 是否正确\n2. 是否已开通通义千问服务\n3. 账户是否有余额`,
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Handle keyboard input
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+    await sendMessageWithText(input);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -149,79 +292,128 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
     }
   };
 
+  const handleVoiceClick = () => {
+    if (!isSpeechConfigured) {
+      setShowSettings(true);
+      setActiveSettingsTab('xunfei');
+      return;
+    }
+    if (!apiKey) {
+      setShowSettings(true);
+      setActiveSettingsTab('qwen');
+      return;
+    }
+    toggleListening();
+  };
+
   return (
     <div className={styles.container}>
-      {/* Chat Window */}
       {isOpen && (
         <div className={styles.chatWindow}>
           {/* Header */}
           <div className={styles.header}>
             <div className={styles.headerTitle}>
               <span className={styles.headerIcon}>🤖</span>
-              <span>AI 助手</span>
+              <span>AI 音乐助手</span>
             </div>
             <div className={styles.headerActions}>
-              <button
-                className={styles.headerBtn}
-                onClick={clearChat}
-                title="清空对话"
-              >
-                🗑️
-              </button>
-              <button
-                className={styles.headerBtn}
-                onClick={() => setShowSettings(!showSettings)}
-                title="设置"
-              >
-                ⚙️
-              </button>
-              <button
-                className={styles.headerBtn}
-                onClick={() => setIsOpen(false)}
-                title="关闭"
-              >
-                ✕
-              </button>
+              <button className={styles.headerBtn} onClick={clearChat} title="清空对话">🗑️</button>
+              <button className={styles.headerBtn} onClick={() => setShowSettings(!showSettings)} title="设置">⚙️</button>
+              <button className={styles.headerBtn} onClick={() => setIsOpen(false)} title="关闭">✕</button>
             </div>
           </div>
 
           {/* Settings Panel */}
           {showSettings && (
             <div className={styles.settingsPanel}>
-              <label className={styles.settingsLabel}>
-                通义千问 API Key
-                <input
-                  type="password"
-                  className={styles.settingsInput}
-                  placeholder="输入您的 API Key"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      saveApiKey(apiKey);
-                    }
-                  }}
-                />
-              </label>
-              <div className={styles.settingsActions}>
+              {/* Tabs */}
+              <div className={styles.settingsTabs}>
                 <button
-                  className={styles.settingsSaveBtn}
-                  onClick={() => saveApiKey(apiKey)}
+                  className={`${styles.settingsTab} ${activeSettingsTab === 'qwen' ? styles.active : ''}`}
+                  onClick={() => setActiveSettingsTab('qwen')}
                 >
-                  保存
+                  通义千问
                 </button>
-                <a
-                  href="https://dashscope.console.aliyun.com/apiKey"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.settingsLink}
+                <button
+                  className={`${styles.settingsTab} ${activeSettingsTab === 'xunfei' ? styles.active : ''}`}
+                  onClick={() => setActiveSettingsTab('xunfei')}
                 >
-                  获取免费 API Key →
-                </a>
+                  语音识别
+                </button>
               </div>
-              <div className={styles.settingsHint}>
-                新用户免费额度 100 万 tokens
-              </div>
+
+              {/* Qwen Settings */}
+              {activeSettingsTab === 'qwen' && (
+                <div className={styles.settingsContent}>
+                  <label className={styles.settingsLabel}>
+                    API Key
+                    <input
+                      type="password"
+                      className={styles.settingsInput}
+                      placeholder="输入您的通义千问 API Key"
+                      value={apiKey}
+                      onChange={(e) => setApiKey(e.target.value)}
+                    />
+                  </label>
+                  <div className={styles.settingsActions}>
+                    <button className={styles.settingsSaveBtn} onClick={() => saveApiKey(apiKey)}>保存</button>
+                    <a href="https://dashscope.console.aliyun.com/apiKey" target="_blank" rel="noopener noreferrer" className={styles.settingsLink}>
+                      获取免费 API Key →
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Xunfei Settings */}
+              {activeSettingsTab === 'xunfei' && (
+                <div className={styles.settingsContent}>
+                  <label className={styles.settingsLabel}>
+                    AppID
+                    <input
+                      type="text"
+                      className={styles.settingsInput}
+                      placeholder="讯飞 AppID"
+                      value={xunfeiForm.appId}
+                      onChange={(e) => setXunfeiForm({ ...xunfeiForm, appId: e.target.value })}
+                    />
+                  </label>
+                  <label className={styles.settingsLabel}>
+                    API Key
+                    <input
+                      type="password"
+                      className={styles.settingsInput}
+                      placeholder="讯飞 API Key"
+                      value={xunfeiForm.apiKey}
+                      onChange={(e) => setXunfeiForm({ ...xunfeiForm, apiKey: e.target.value })}
+                    />
+                  </label>
+                  <label className={styles.settingsLabel}>
+                    API Secret
+                    <input
+                      type="password"
+                      className={styles.settingsInput}
+                      placeholder="讯飞 API Secret"
+                      value={xunfeiForm.apiSecret}
+                      onChange={(e) => setXunfeiForm({ ...xunfeiForm, apiSecret: e.target.value })}
+                    />
+                  </label>
+                  <div className={styles.settingsActions}>
+                    <button
+                      className={styles.settingsSaveBtn}
+                      onClick={handleSaveXunfeiConfig}
+                      disabled={!xunfeiForm.appId || !xunfeiForm.apiKey || !xunfeiForm.apiSecret}
+                    >
+                      保存
+                    </button>
+                    <a href="https://console.xfyun.cn/services/iat" target="_blank" rel="noopener noreferrer" className={styles.settingsLink}>
+                      讯飞控制台 →
+                    </a>
+                  </div>
+                  <div className={styles.settingsHint}>
+                    {isSpeechConfigured ? '✅ 语音识别已配置' : '请配置讯飞语音识别（每日500次免费）'}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -232,18 +424,17 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
                 <div className={styles.welcomeIcon}>🎵</div>
                 <div className={styles.welcomeText}>
                   你好！我是你的AI音乐助手 🎧
-                  <br />
-                  {currentTrackName ? (
-                    <>
-                      当前正在播放：{currentTrackName}{currentArtist ? ` - ${currentArtist}` : ''}
-                    </>
-                  ) : (
-                    '有什么可以帮你的吗？'
-                  )}
+                  <br /><br />
+                  <span className={styles.welcomeExamples}>
+                    试着对我说：
+                    <br />• "我想听周杰伦的歌"
+                    <br />• "放一首稻香"
+                    <br />• "随机播放一首歌"
+                  </span>
                 </div>
-                {!apiKey && (
+                {(!apiKey || !isSpeechConfigured) && (
                   <div className={styles.welcomeHint}>
-                    点击 ⚙️ 设置通义千问 API Key
+                    点击 ⚙️ 完成配置后开始使用
                   </div>
                 )}
               </div>
@@ -251,13 +442,9 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
               messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`${styles.message} ${
-                    msg.role === 'user' ? styles.userMessage : styles.assistantMessage
-                  }`}
+                  className={`${styles.message} ${msg.role === 'user' ? styles.userMessage : styles.assistantMessage}`}
                 >
-                  <div className={styles.messageAvatar}>
-                    {msg.role === 'user' ? '👤' : '🤖'}
-                  </div>
+                  <div className={styles.messageAvatar}>{msg.role === 'user' ? '👤' : '🤖'}</div>
                   <div className={styles.messageContent}>{msg.content}</div>
                 </div>
               ))
@@ -265,11 +452,7 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
             {isLoading && (
               <div className={`${styles.message} ${styles.assistantMessage}`}>
                 <div className={styles.messageAvatar}>🤖</div>
-                <div className={styles.typing}>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
+                <div className={styles.typing}><span></span><span></span><span></span></div>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -277,54 +460,53 @@ export function AIChat({ currentTrackName, currentArtist }: AIChatProps) {
 
           {/* Input */}
           <div className={styles.inputArea}>
+            <button
+              className={`${styles.voiceBtn} ${speechState === 'listening' ? styles.listening : ''}`}
+              onClick={handleVoiceClick}
+              disabled={isLoading}
+              title={speechState === 'listening' ? '点击停止' : '语音输入'}
+            >
+              {speechState === 'listening' ? (
+                <span className={styles.voiceWaves}><span></span><span></span><span></span><span></span></span>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="currentColor" className={styles.micIcon}>
+                  <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                  <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" fill="none" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              )}
+            </button>
             <input
               type="text"
               className={styles.input}
-              placeholder={apiKey ? '输入消息...' : '请先设置 API Key...'}
+              placeholder={apiKey ? '说你想听的歌...' : '请先设置 API Key...'}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               disabled={isLoading || !apiKey}
             />
-            <button
-              className={styles.sendBtn}
-              onClick={sendMessage}
-              disabled={isLoading || !input.trim() || !apiKey}
-            >
+            <button className={styles.sendBtn} onClick={sendMessage} disabled={isLoading || !input.trim() || !apiKey}>
               {isLoading ? '...' : '发送'}
             </button>
           </div>
+
+          {speechError && <div className={styles.speechError}>{speechError}</div>}
         </div>
       )}
 
       {/* Floating Button */}
-      <button
-        className={`${styles.floatingBtn} ${isOpen ? styles.active : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-        title="AI 助手"
-      >
+      <button className={`${styles.floatingBtn} ${isOpen ? styles.active : ''}`} onClick={() => setIsOpen(!isOpen)} title="AI 音乐助手">
         {isOpen ? (
           <span className={styles.closeIcon}>✕</span>
         ) : (
-          <svg
-            className={styles.robotIcon}
-            viewBox="0 0 64 64"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {/* Robot head */}
+          <svg className={styles.robotIcon} viewBox="0 0 64 64" fill="none">
             <rect x="12" y="16" width="40" height="36" rx="8" fill="currentColor" />
-            {/* Antenna */}
             <circle cx="32" cy="8" r="4" fill="currentColor" />
             <rect x="30" y="8" width="4" height="8" fill="currentColor" />
-            {/* Eyes */}
             <circle cx="24" cy="30" r="5" fill="#0a0a0a" />
             <circle cx="40" cy="30" r="5" fill="#0a0a0a" />
             <circle cx="25" cy="29" r="2" fill="#00ff00" />
             <circle cx="41" cy="29" r="2" fill="#00ff00" />
-            {/* Mouth */}
             <rect x="24" y="40" width="16" height="4" rx="2" fill="#0a0a0a" />
-            {/* Ears */}
             <rect x="6" y="24" width="6" height="12" rx="3" fill="currentColor" />
             <rect x="52" y="24" width="6" height="12" rx="3" fill="currentColor" />
           </svg>

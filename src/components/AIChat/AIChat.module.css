@@ -157,6 +157,42 @@
   border-bottom: 1px solid rgba(0, 255, 0, 0.1);
 }
 
+.settingsTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.settingsTab {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 6px;
+  color: rgba(0, 255, 0, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.settingsTab:hover {
+  background: rgba(0, 255, 0, 0.15);
+  color: rgba(0, 255, 0, 0.8);
+}
+
+.settingsTab.active {
+  background: rgba(0, 255, 0, 0.2);
+  border-color: rgba(0, 255, 0, 0.4);
+  color: var(--led-text-color, #00ff00);
+}
+
+.settingsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .settingsLabel {
   display: flex;
   flex-direction: column;
@@ -282,6 +318,15 @@
   color: var(--led-text-color, #00ff00);
   font-size: 14px;
   line-height: 1.6;
+}
+
+.welcomeExamples {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(0, 255, 0, 0.6);
+  text-align: left;
+  line-height: 1.8;
 }
 
 .welcomeHint {
@@ -449,6 +494,114 @@
   cursor: not-allowed;
 }
 
+/* === Voice Button === */
+
+.voiceBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  border-radius: 50%;
+  color: var(--led-text-color, #00ff00);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.voiceBtn:hover:not(:disabled) {
+  background: rgba(0, 255, 0, 0.2);
+  border-color: rgba(0, 255, 0, 0.5);
+  transform: scale(1.05);
+}
+
+.voiceBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.voiceBtn.listening {
+  background: rgba(255, 100, 100, 0.2);
+  border-color: rgba(255, 100, 100, 0.5);
+  color: #ff6b6b;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 100, 100, 0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(255, 100, 100, 0);
+  }
+}
+
+.micIcon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Voice Waves Animation */
+.voiceWaves {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 16px;
+}
+
+.voiceWaves span {
+  width: 3px;
+  height: 8px;
+  background: currentColor;
+  border-radius: 2px;
+  animation: wave 0.6s ease-in-out infinite;
+}
+
+.voiceWaves span:nth-child(1) {
+  animation-delay: 0s;
+  height: 6px;
+}
+
+.voiceWaves span:nth-child(2) {
+  animation-delay: 0.1s;
+  height: 12px;
+}
+
+.voiceWaves span:nth-child(3) {
+  animation-delay: 0.2s;
+  height: 8px;
+}
+
+.voiceWaves span:nth-child(4) {
+  animation-delay: 0.3s;
+  height: 14px;
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: scaleY(0.5);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* Speech Error */
+.speechError {
+  padding: 8px 16px;
+  background: rgba(255, 100, 100, 0.1);
+  border-top: 1px solid rgba(255, 100, 100, 0.2);
+  color: #ff6b6b;
+  font-size: 11px;
+  text-align: center;
+}
+
 /* === Responsive === */
 
 @media (max-width: 480px) {
@@ -494,6 +647,14 @@
   }
 
   .message {
+    animation: none;
+  }
+
+  .voiceBtn.listening {
+    animation: none;
+  }
+
+  .voiceWaves span {
     animation: none;
   }
 }
